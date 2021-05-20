@@ -12,7 +12,7 @@ test:
 .PHONY: run
 ## run: Runs ec2connect
 run:
-	go run main.go cmd -c "ls"
+	go run main.go
 
 .PHONY: help
 ## help: Prints this help message

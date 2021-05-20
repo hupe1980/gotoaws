@@ -24,7 +24,7 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "ec2connect",
 		Short: "",
-		Long:  `ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances using the [AWS Systems Manager Session Manager.`,
+		Long:  `ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances using the AWS Systems Manager Session Manager.`,
 	}
 )
 
@@ -107,6 +107,5 @@ func chooseInstance(instances []internal.Instance) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return instances[i].ID, nil
 }

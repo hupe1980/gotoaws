@@ -21,11 +21,11 @@ var (
 			if err != nil {
 				panic(err)
 			}
-			if res, err := command.Result(); err != nil {
+			res, err := command.Result()
+			if err != nil {
 				panic(err)
-			} else {
-				fmt.Println(color.GreenString(res))
 			}
+			fmt.Println(color.GreenString(res))
 		},
 	}
 )
