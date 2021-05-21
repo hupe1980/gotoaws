@@ -17,7 +17,7 @@ brew install ec2connect
 
 ### scoop
 ```bash
-scoop bucket add goreleaser https://github.com/hupe1980/ec2connect-bucket.git
+scoop bucket add ec2connect https://github.com/hupe1980/ec2connect-bucket.git
 scoop install ec2connect
 ```
 
