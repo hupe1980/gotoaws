@@ -11,17 +11,23 @@ You can install the pre-compiled binary in several different ways
 
 ### homebrew tap:
 ```bash
-$ brew tap hupe1980/ec2connect
-$ brew install ec2connect
+brew tap hupe1980/ec2connect
+brew install ec2connect
 ```
 
-### deb/rpm/apk:
+### scoop
+```bash
+scoop bucket add goreleaser https://github.com/hupe1980/ec2connect-bucket.git
+scoop install ec2connect
+```
+
+## deb/rpm/apk:
 
 Download the .deb, .rpm or .apk from the [releases page](https://github.com/hupe1980/ec2connect/releases) and install them with the appropriate tools.
 
 ### go install
 ```bash
-$ go install github.com/hupe1980/ec2connect
+go install github.com/hupe1980/ec2connect
 ```
 ### manually:
 Download the pre-compiled binaries from the [releases page](https://github.com/hupe1980/ec2connect/releases) and copy to the desired location.
