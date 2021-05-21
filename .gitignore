@@ -16,3 +16,4 @@
 dist/
 completions/
 .DS_Store
+ec2connect
