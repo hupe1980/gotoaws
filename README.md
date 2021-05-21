@@ -1,5 +1,5 @@
 # ec2connect
-ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances using the [AWS Systems Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html). It provides secure and auditable instance management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. You can connect to your instances by name, ID, DNS, IP or or select an instance from a list.
+ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances using the [AWS Systems Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html). It provides secure and auditable instance management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. You can connect to your instances by name, ID, DNS, IP or select an instance from a list.
 
 ## Prerequisites
 - [session-manager-plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) must be installed on your client
