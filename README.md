@@ -47,9 +47,9 @@ Available Commands:
   fwd         Port forwarding
   help        Help about any command
   run         Run commands
-  scp         Tunnel scp
+  scp         SCP over Session Manager
   session     Start a session
-  ssh         Tunnel ssh
+  ssh         SSH over Session Manager
 
 Flags:
   -h, --help             help for ec2connect
@@ -101,7 +101,7 @@ Global Flags:
       --region string    AWS region (optional)
 ```
 
-### Tunnel ssh
+### SSH over Session Manager
 ```
 Usage:
   ec2connect ssh [name|ID|IP|DNS|_] [flags]
@@ -118,7 +118,7 @@ Global Flags:
       --region string    AWS region (optional)
 ```
 
-### Tunnel scp
+### SCP over Session Manager
 ```
 Usage:
   ec2connect scp [name|ID|IP|DNS|_] [flags]

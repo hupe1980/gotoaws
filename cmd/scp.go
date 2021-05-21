@@ -20,7 +20,7 @@ func newSCPCmd() *cobra.Command {
 	opts := &scpOptions{}
 	cmd := &cobra.Command{
 		Use:           "scp [name|ID|IP|DNS|_]",
-		Short:         "Tunnel scp",
+		Short:         "SCP over Session Manager",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

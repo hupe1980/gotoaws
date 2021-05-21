@@ -19,7 +19,7 @@ func newSSHCmd() *cobra.Command {
 	opts := &sshOptions{}
 	cmd := &cobra.Command{
 		Use:           "ssh [name|ID|IP|DNS|_]",
-		Short:         "Tunnel ssh",
+		Short:         "SSH over Session Manager",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
