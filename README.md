@@ -16,7 +16,12 @@ brew tap hupe1980/ec2connect
 brew install ec2connect
 ```
 
-### scoop
+### snapcraft:
+```bash
+sudo snap install --classic ec2connect
+```
+
+### scoop:
 ```bash
 scoop bucket add ec2connect https://github.com/hupe1980/ec2connect-bucket.git
 scoop install ec2connect
@@ -26,7 +31,7 @@ scoop install ec2connect
 
 Download the .deb, .rpm or .apk from the [releases page](https://github.com/hupe1980/ec2connect/releases) and install them with the appropriate tools.
 
-### go install
+### go install:
 ```bash
 go install github.com/hupe1980/ec2connect
 ```
