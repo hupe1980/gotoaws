@@ -18,7 +18,7 @@ func RunSubprocess(process string, args ...string) error {
 	return nil
 }
 
-func SSHCommand(user string, instanceID string, identity string, cmd string) string {
+func SSHArgs(user string, instanceID string, identity string, cmd string) string {
 	ssh := fmt.Sprintf("-i %s %s@%s", identity, user, instanceID)
 	if cmd == "" {
 		return ssh
@@ -26,6 +26,6 @@ func SSHCommand(user string, instanceID string, identity string, cmd string) str
 	return fmt.Sprintf("%s %s", ssh, cmd)
 }
 
-func SCPCommand(user string, instanceID string, identity string, source string, target string) string {
+func SCPArgs(user string, instanceID string, identity string, source string, target string) string {
 	return fmt.Sprintf("-i %s %s %s@%s:%s", identity, source, user, instanceID, target)
 }

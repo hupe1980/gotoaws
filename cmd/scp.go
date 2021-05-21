@@ -8,56 +8,69 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	scpPort     string
-	scpUser     string
-	scpIdentity string
-	scpSource   string
-	scpTarget   string
+type scpOptions struct {
+	port     string
+	user     string
+	identity string
+	source   string
+	target   string
+}
 
-	scpCommand = &cobra.Command{
-		Use:    "scp [identifier]",
-		Short:  "",
-		Long:   "",
-		PreRun: preRun,
-		Run: func(cmd *cobra.Command, args []string) {
+func newSCPCmd() *cobra.Command {
+	opts := &scpOptions{}
+	cmd := &cobra.Command{
+		Use:           "scp [identifier]",
+		Short:         "",
+		SilenceUsage:  true,
+		SilenceErrors: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := newConfig(cmd)
+			if err != nil {
+				return err
+			}
+
+			instanceID, err := findInstance(cfg, args)
+			if err != nil {
+				return err
+			}
+
 			docName := "AWS-StartSSHSession"
 			input := &ssm.StartSessionInput{
 				DocumentName: &docName,
-				Parameters:   map[string][]string{"portNumber": {scpPort}},
+				Parameters:   map[string][]string{"portNumber": {opts.port}},
 				Target:       &instanceID,
 			}
 			session, err := internal.NewSession(cfg, input)
 			if err != nil {
-				panic(err)
+				return err
 			}
 			defer session.Close()
 
 			pc, err := session.ProxyCommand()
 			if err != nil {
-				panic(err)
+				return err
 			}
 			scpArgs := []string{"-o", pc}
-			for _, sep := range strings.Split(internal.SCPCommand(scpUser, instanceID, scpIdentity, scpSource, scpTarget), " ") {
+			for _, sep := range strings.Split(internal.SCPArgs(opts.user, instanceID, opts.identity, opts.source, opts.target), " ") {
 				if sep != "" {
 					scpArgs = append(scpArgs, sep)
 				}
 			}
 			if err := internal.RunSubprocess("scp", scpArgs...); err != nil {
-				panic(err)
+				return err
 			}
+			return nil
 		},
 	}
-)
 
-func init() {
-	scpCommand.Flags().StringVarP(&scpPort, "port", "p", "22", "(optional)")
-	scpCommand.Flags().StringVarP(&scpUser, "user", "l", "ec2-user", "SCP user to us (optional)")
-	scpCommand.Flags().StringVarP(&scpSource, "source", "s", "", "(required)")
-	scpCommand.MarkFlagRequired("source")
-	scpCommand.Flags().StringVarP(&scpTarget, "target", "t", "", "(required)")
-	scpCommand.MarkFlagRequired("target")
-	scpCommand.Flags().StringVarP(&scpIdentity, "identity", "i", "", "(required)")
-	scpCommand.MarkFlagRequired("identity")
-	rootCmd.AddCommand(scpCommand)
+	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "(optional)")
+	cmd.Flags().StringVarP(&opts.user, "user", "l", "ec2-user", "SCP user to us (optional)")
+	cmd.Flags().StringVarP(&opts.source, "source", "s", "", "(required)")
+	cmd.MarkFlagRequired("source")
+	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "(required)")
+	cmd.MarkFlagRequired("target")
+	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "", "(required)")
+	cmd.MarkFlagRequired("identity")
+
+	return cmd
 }

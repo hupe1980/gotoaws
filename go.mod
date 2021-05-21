@@ -10,4 +10,5 @@ require (
 	github.com/fatih/color v1.11.0
 	github.com/manifoldco/promptui v0.8.0
 	github.com/spf13/cobra v1.1.3
+	github.com/stretchr/testify v1.7.0
 )

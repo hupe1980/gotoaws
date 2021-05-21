@@ -6,41 +6,55 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
+type fwdOptions struct {
 	remotePortNumber string
 	localPortNumber  string
+}
 
-	fwdCommand = &cobra.Command{
-		Use:    "fwd [identifier]",
-		Short:  "",
-		Long:   "",
-		PreRun: preRun,
-		Run: func(cmd *cobra.Command, args []string) {
+func newFwdCmd() *cobra.Command {
+	opts := &fwdOptions{}
+	cmd := &cobra.Command{
+		Use:           "fwd [identifier]",
+		Short:         "",
+		SilenceUsage:  true,
+		SilenceErrors: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := newConfig(cmd)
+			if err != nil {
+				return err
+			}
+
+			instanceID, err := findInstance(cfg, args)
+			if err != nil {
+				return err
+			}
+
 			docName := "AWS-StartPortForwardingSession"
 			input := &ssm.StartSessionInput{
 				DocumentName: &docName,
 				Parameters: map[string][]string{
-					"portNumber":      {remotePortNumber},
-					"localPortNumber": {localPortNumber},
+					"portNumber":      {opts.remotePortNumber},
+					"localPortNumber": {opts.localPortNumber},
 				},
 				Target: &instanceID,
 			}
 			session, err := internal.NewSession(cfg, input)
 			if err != nil {
-				panic(err)
+				return err
 			}
 			defer session.Close()
+
 			if err := session.RunPlugin(); err != nil {
-				panic(err)
+				return err
 			}
+			return nil
 		},
 	}
-)
 
-func init() {
-	fwdCommand.Flags().StringVarP(&remotePortNumber, "remote", "r", "", "Remote port to forward to (required)")
-	fwdCommand.MarkFlagRequired("remote")
-	fwdCommand.Flags().StringVarP(&localPortNumber, "local", "l", "", "Local port to use (required)")
-	fwdCommand.MarkFlagRequired("local")
-	rootCmd.AddCommand(fwdCommand)
+	cmd.Flags().StringVarP(&opts.remotePortNumber, "remote", "r", "", "Remote port to forward to (required)")
+	cmd.MarkFlagRequired("remote")
+	cmd.Flags().StringVarP(&opts.localPortNumber, "local", "l", "", "Local port to use (required)")
+	cmd.MarkFlagRequired("local")
+
+	return cmd
 }

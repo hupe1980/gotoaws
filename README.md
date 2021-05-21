@@ -13,8 +13,6 @@ ec2connect is an interactive CLI tool that you can use to connect to your EC2 in
 
 ## Features
 ```bash
-ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances using the AWS Systems Manager Session Manager.
-
 Usage:
   ec2connect [command]
 

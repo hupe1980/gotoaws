@@ -10,51 +10,57 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	version = "0.1.0"
-)
-
-var (
-	cfg        *internal.Config
-	profile    string
-	region     string
-	instanceID string
-
-	// rootCmd represents the base command when called without any sub-commands
-	rootCmd = &cobra.Command{
-		Use:   "ec2connect",
-		Short: "",
-		Long:  `ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances using the AWS Systems Manager Session Manager.`,
-	}
-)
-
-// Execute executes the root command.
-func Execute() {
+func Execute(version string) {
+	rootCmd := newRootCmd(version)
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func init() {
-	cobra.OnInitialize(initConfig)
-
-	rootCmd.PersistentFlags().StringVarP(&profile, "profile", "", "default", "AWS profile (optional)")
-	rootCmd.PersistentFlags().StringVarP(&region, "region", "", "", "AWS region (optional)")
-
-	rootCmd.Version = version
-	rootCmd.InitDefaultVersionFlag()
+type rootOptions struct {
+	profile string
+	region  string
 }
 
-func initConfig() {
-	var err error
-	cfg, err = internal.NewConfig(profile, region)
-	if err != nil {
-		panic(err)
+func newRootCmd(version string) *cobra.Command {
+	opts := &rootOptions{}
+	cmd := &cobra.Command{
+		Use:     "ec2connect",
+		Version: version,
+		Short:   "",
+		Long: `ec2connect is an interactive CLI tool 
+		that you can use to connect to your EC2 instances 
+		using the AWS Systems Manager Session Manager.`,
+		SilenceErrors: true,
 	}
+	cmd.PersistentFlags().StringVarP(&opts.profile, "profile", "", "default", "AWS profile (optional)")
+	cmd.PersistentFlags().StringVarP(&opts.region, "region", "", "", "AWS region (optional)")
+	cmd.AddCommand(
+		newRunCmd(),
+		newFwdCmd(),
+		newSCPCmd(),
+		newSSHCmd(),
+		newSessionCmd(),
+	)
+	return cmd
 }
 
-func findInstance(args []string) (string, error) {
+func newConfig(cmd *cobra.Command) (*internal.Config, error) {
+	profile, err := cmd.Root().PersistentFlags().GetString("profile")
+	if err != nil {
+		return nil, err
+	}
+
+	region, err := cmd.Root().PersistentFlags().GetString("region")
+	if err != nil {
+		return nil, err
+	}
+
+	return internal.NewConfig(profile, region)
+}
+
+func findInstance(cfg *internal.Config, args []string) (string, error) {
 	if len(args) > 0 {
 		identifier := args[0]
 		instances, err := internal.FindInstanceByIdentifier(cfg, identifier)
@@ -73,17 +79,9 @@ func findInstance(args []string) (string, error) {
 	return chooseInstance(instances)
 }
 
-func preRun(cmd *cobra.Command, args []string) {
-	var err error
-	instanceID, err = findInstance(args)
-	if err != nil {
-		panic(err)
-	}
-}
-
 func chooseInstance(instances []internal.Instance) (string, error) {
 	templates := &promptui.SelectTemplates{
-		Active:   fmt.Sprintf("%s {{ .Name | cyan | bold }} ({{ .ID }})", promptui.IconSelect),
+		Active:   fmt.Sprintf(`%s {{ .Name | cyan | bold }} ({{ .ID }})`, promptui.IconSelect),
 		Inactive: `   {{ .Name | cyan }} ({{ .ID }})`,
 		Selected: fmt.Sprintf(`%s {{ "Instance" | bold }}: {{ .Name | cyan }} ({{ .ID }})`, promptui.IconGood),
 	}

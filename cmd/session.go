@@ -6,26 +6,36 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	sessionCommand = &cobra.Command{
-		Use:    "session [identifier]",
-		Short:  "",
-		Long:   "",
-		PreRun: preRun,
-		Run: func(cmd *cobra.Command, args []string) {
+func newSessionCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:           "session [identifier]",
+		Short:         "",
+		SilenceUsage:  true,
+		SilenceErrors: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := newConfig(cmd)
+			if err != nil {
+				return err
+			}
+
+			instanceID, err := findInstance(cfg, args)
+			if err != nil {
+				return err
+			}
+
 			input := &ssm.StartSessionInput{Target: &instanceID}
 			session, err := internal.NewSession(cfg, input)
 			if err != nil {
 				panic(err)
 			}
 			defer session.Close()
+
 			if err := session.RunPlugin(); err != nil {
 				panic(err)
 			}
+			return nil
 		},
 	}
-)
 
-func init() {
-	rootCmd.AddCommand(sessionCommand)
+	return cmd
 }
