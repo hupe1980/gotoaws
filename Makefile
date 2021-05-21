@@ -4,10 +4,24 @@ PROJECTNAME=$(shell basename "$(PWD)")
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
 
+.PHONY: setup
+## setup: Setup installes dependencies
+setup:
+	go mod tidy
+
 .PHONY: test
 ## test: Runs go test with default values
 test:
 	go test -v -race -count=1  ./...
+
+.PHONY: build
+## build: Builds a beta version of ec2connect
+build:
+	go build
+
+.PHONY: ci
+## ci: Run all the tests and code checks
+ci: build test
 
 .PHONY: run
 ## run: Runs ec2connect
