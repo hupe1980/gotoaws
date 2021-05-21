@@ -17,7 +17,7 @@ test:
 .PHONY: build
 ## build: Builds a beta version of ec2connect
 build:
-	go build
+	go build -o dist/
 
 .PHONY: ci
 ## ci: Run all the tests and code checks

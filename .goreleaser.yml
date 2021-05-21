@@ -42,3 +42,33 @@ changelog:
       - Merge pull request
       - Merge branch
       - go mod tidy
+brews:
+  - tap:
+      owner: hupe1980
+      name: homebrew-ec2connect
+    homepage:  https://github.com/hupe1980/ec2connect
+    description: ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances using the AWS Systems Manager Session Manager
+    license: MIT
+    test: |
+      system "#{bin}/ec2connect -v"
+    install: |-
+      bin.install "ec2connect"
+      bash_completion.install "completions/ec2connect.bash" => "ec2connect"
+      zsh_completion.install "completions/ec2connect.zsh" => "_ec2connect"
+      fish_completion.install "completions/ec2connect.fish"
+nfpms:
+  - file_name_template: '{{ .ProjectName }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    homepage:  https://github.com/hupe1980/ec2connect
+    description: ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances using the AWS Systems Manager Session Manager
+    license: MIT
+    contents:
+      - src: ./completions/ec2connect.bash
+        dst: /etc/bash_completion.d/ec2connect
+      - src: ./completions/ec2connect.fish
+        dst: /usr/share/fish/completions/ec2connect.fish
+      - src: ./completions/ec2connect.zsh
+        dst: /usr/local/share/zsh/site-functions/_ec2connect
+    formats:
+    - apk
+    - deb
+    - rpm
