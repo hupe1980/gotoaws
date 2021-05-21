@@ -2,10 +2,6 @@ package cmd
 
 import "github.com/spf13/cobra"
 
-type completionOption struct {
-	cmd *cobra.Command
-}
-
 func newCompletionCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "completion [bash|zsh|fish]",
