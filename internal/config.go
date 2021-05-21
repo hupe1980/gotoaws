@@ -36,10 +36,10 @@ func NewConfig(profile string, region string) (*Config, error) {
 		awsCfg.Region = region
 	}
 
-	pluginPath, err := exec.LookPath("xsession-manager-plugin")
+	pluginPath, err := exec.LookPath("session-manager-plugin")
 	if err != nil {
 		return nil, fmt.Errorf(`session-manager-plugin not found
-		
+
 https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html
 		`)
 	}
