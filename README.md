@@ -16,11 +16,6 @@ brew tap hupe1980/ec2connect
 brew install ec2connect
 ```
 
-### snapcraft:
-```bash
-sudo snap install --classic ec2connect
-```
-
 ### scoop:
 ```bash
 scoop bucket add ec2connect https://github.com/hupe1980/ec2connect-bucket.git
