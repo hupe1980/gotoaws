@@ -28,8 +28,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Run Setup
+        run: make setup
+      
       - name: Run Tests
-        run: make test
+        run: make ci
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
