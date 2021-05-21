@@ -42,6 +42,7 @@ func newRootCmd(version string) *cobra.Command {
 		newSCPCmd(),
 		newSSHCmd(),
 		newSessionCmd(),
+		newCompletionCmd(),
 	)
 	return cmd
 }

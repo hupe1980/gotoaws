@@ -12,7 +12,7 @@ test:
 .PHONY: run
 ## run: Runs ec2connect
 run:
-	go run main.go run -c "cat /etc/passwd" --region us-east-1
+	go run main.go run -c "cat /etc/passwd"
 
 .PHONY: help
 ## help: Prints this help message

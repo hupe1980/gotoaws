@@ -3,43 +3,42 @@ env:
 before:
   hooks:
     - go mod tidy
+    - ./scripts/completions.sh
 builds:
-  - binary: ec2connect
-    env:
+  - env:
       - CGO_ENABLED=0
     goos:
+      - linux
       - windows
       - darwin
-      - linux
     goarch:
+      - 386
       - amd64
-    asmflags:
-      - all=-trimpath={{.Env.GOPATH}}
-    gcflags:
-      - all=-trimpath={{.Env.GOPATH}}
-    ldflags:
-      - -s -w
+      - arm
+      - arm64
 archives:
   - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     replacements:
       darwin: Darwin
       linux: Linux
       windows: Windows
+      386: i386
       amd64: x86_64
     format_overrides:
-    - goos: windows
-      format: zip
+      - goos: windows
+        format: zip
     files:
       - README.md
       - LICENSE
-      - completions/*
+      - completions/*  
+checksum:
+  name_template: '{{ .ProjectName }}_checksums.txt'
 changelog:
   sort: asc
   filters:
     exclude:
       - '^docs:'
       - '^test:'
-release:
-  github:
-    owner: hupe1980
-    name: ec2connect
+      - Merge pull request
+      - Merge branch
+      - go mod tidy
