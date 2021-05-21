@@ -18,8 +18,8 @@ type sshOptions struct {
 func newSSHCmd() *cobra.Command {
 	opts := &sshOptions{}
 	cmd := &cobra.Command{
-		Use:           "ssh [identifier]",
-		Short:         "",
+		Use:           "ssh [name|ID|IP|DNS|_]",
+		Short:         "Tunnel ssh",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -61,10 +61,10 @@ func newSSHCmd() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "SSH port (optional)")
+	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "SSH port to us (optional)")
 	cmd.Flags().StringVarP(&opts.user, "user", "l", "ec2-user", "SSH user to us (optional)")
 	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "(optional)")
-	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "", "(required)")
+	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "", "Command to exceute (required)")
 	cmd.MarkFlagRequired("identity")
 
 	return cmd

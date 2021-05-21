@@ -38,5 +38,102 @@ go install github.com/hupe1980/ec2connect
 ### manually:
 Download the pre-compiled binaries from the [releases page](https://github.com/hupe1980/ec2connect/releases) and copy to the desired location.
 
+## How to use
+```
+Usage:
+  ec2connect [command]
+
+Available Commands:
+  fwd         Port forwarding
+  help        Help about any command
+  run         Run commands
+  scp         Tunnel scp
+  session     Start a session
+  ssh         Tunnel ssh
+
+Flags:
+  -h, --help             help for ec2connect
+      --profile string   AWS profile (optional) (default "default")
+      --region string    AWS region (optional)
+  -v, --version          version for ec2connect
+
+Use "ec2connect [command] --help" for more information about a command.
+```
+
+### Start a session
+```
+Usage:
+  ec2connect session [name|ID|IP|DNS|_] [flags]
+
+Flags:
+  -h, --help   help for session
+
+Global Flags:
+      --profile string   AWS profile (optional) (default "default")
+      --region string    AWS region (optional)
+```
+### Port forwarding
+```
+Usage:
+  ec2connect fwd [name|ID|IP|DNS|_] [flags]
+
+Flags:
+  -h, --help            help for fwd
+  -l, --local string    Local port to use (required)
+  -r, --remote string   Remote port to forward to (required)
+
+Global Flags:
+      --profile string   AWS profile (optional) (default "default")
+      --region string    AWS region (optional)
+```
+
+### Run commands
+```
+Usage:
+  ec2connect run [name|ID|IP|DNS|_] [flags]
+
+Flags:
+  -c, --cmd string   Command to exceute (required)
+  -h, --help         help for run
+
+Global Flags:
+      --profile string   AWS profile (optional) (default "default")
+      --region string    AWS region (optional)
+```
+
+### Tunnel ssh
+```
+Usage:
+  ec2connect ssh [name|ID|IP|DNS|_] [flags]
+
+Flags:
+  -c, --cmd string        (optional)
+  -h, --help              help for ssh
+  -i, --identity string   Command to exceute (required)
+  -p, --port string       SSH port to us (optional) (default "22")
+  -l, --user string       SSH user to us (optional) (default "ec2-user")
+
+Global Flags:
+      --profile string   AWS profile (optional) (default "default")
+      --region string    AWS region (optional)
+```
+
+### Tunnel scp
+```
+Usage:
+  ec2connect scp [name|ID|IP|DNS|_] [flags]
+
+Flags:
+  -h, --help              help for scp
+  -i, --identity string   (required)
+  -p, --port string       SSH port to us (optional) (default "22")
+  -s, --source string     Source in the local host (required)
+  -t, --target string     Target in the remote host (required)
+  -l, --user string       SCP user to us (optional) (default "ec2-user")
+
+Global Flags:
+      --profile string   AWS profile (optional) (default "default")
+      --region string    AWS region (optional)
+```
 ## License
 [MIT](LICENCE)

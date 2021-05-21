@@ -14,8 +14,8 @@ type fwdOptions struct {
 func newFwdCmd() *cobra.Command {
 	opts := &fwdOptions{}
 	cmd := &cobra.Command{
-		Use:           "fwd [identifier]",
-		Short:         "",
+		Use:           "fwd [name|ID|IP|DNS|_]",
+		Short:         "Port forwarding",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

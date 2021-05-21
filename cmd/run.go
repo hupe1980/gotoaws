@@ -14,8 +14,8 @@ type runOptions struct {
 func newRunCmd() *cobra.Command {
 	opts := &runOptions{}
 	cmd := &cobra.Command{
-		Use:           "run [identifier]",
-		Short:         "",
+		Use:           "run [name|ID|IP|DNS|_]",
+		Short:         "Run commands",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

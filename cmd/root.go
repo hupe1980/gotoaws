@@ -28,10 +28,10 @@ func newRootCmd(version string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "ec2connect",
 		Version: version,
-		Short:   "",
+		Short:   "ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances",
 		Long: `ec2connect is an interactive CLI tool 
-		that you can use to connect to your EC2 instances 
-		using the AWS Systems Manager Session Manager.`,
+that you can use to connect to your EC2 instances 
+using the AWS Systems Manager Session Manager.`,
 		SilenceErrors: true,
 	}
 	cmd.PersistentFlags().StringVarP(&opts.profile, "profile", "", "default", "AWS profile (optional)")

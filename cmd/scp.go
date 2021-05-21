@@ -19,8 +19,8 @@ type scpOptions struct {
 func newSCPCmd() *cobra.Command {
 	opts := &scpOptions{}
 	cmd := &cobra.Command{
-		Use:           "scp [identifier]",
-		Short:         "",
+		Use:           "scp [name|ID|IP|DNS|_]",
+		Short:         "Tunnel scp",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -63,11 +63,11 @@ func newSCPCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "(optional)")
+	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "SSH port to us (optional)")
 	cmd.Flags().StringVarP(&opts.user, "user", "l", "ec2-user", "SCP user to us (optional)")
-	cmd.Flags().StringVarP(&opts.source, "source", "s", "", "(required)")
+	cmd.Flags().StringVarP(&opts.source, "source", "s", "", "Source in the local host (required)")
 	cmd.MarkFlagRequired("source")
-	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "(required)")
+	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "Target in the remote host (required)")
 	cmd.MarkFlagRequired("target")
 	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "", "(required)")
 	cmd.MarkFlagRequired("identity")
