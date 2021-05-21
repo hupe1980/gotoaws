@@ -51,9 +51,9 @@ func newFwdCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.remotePortNumber, "remote", "r", "", "Remote port to forward to (required)")
+	cmd.Flags().StringVarP(&opts.remotePortNumber, "remote", "r", "", "remote port to forward to (required)")
 	cmd.MarkFlagRequired("remote")
-	cmd.Flags().StringVarP(&opts.localPortNumber, "local", "l", "", "Local port to use (required)")
+	cmd.Flags().StringVarP(&opts.localPortNumber, "local", "l", "", "local port to use (required)")
 	cmd.MarkFlagRequired("local")
 
 	return cmd

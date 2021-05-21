@@ -39,7 +39,7 @@ func newRunCmd() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "Command to exceute (required)")
+	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "command to exceute (required)")
 	cmd.MarkFlagRequired("cmd")
 
 	return cmd

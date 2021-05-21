@@ -79,8 +79,8 @@ Usage:
 
 Flags:
   -h, --help            help for fwd
-  -l, --local string    Local port to use (required)
-  -r, --remote string   Remote port to forward to (required)
+  -l, --local string    local port to use (required)
+  -r, --remote string   remote port to forward to (required)
 
 Global Flags:
       --profile string   AWS profile (optional) (default "default")
@@ -93,7 +93,7 @@ Usage:
   ec2connect run [name|ID|IP|DNS|_] [flags]
 
 Flags:
-  -c, --cmd string   Command to exceute (required)
+  -c, --cmd string   command to exceute (required)
   -h, --help         help for run
 
 Global Flags:
@@ -107,9 +107,9 @@ Usage:
   ec2connect ssh [name|ID|IP|DNS|_] [flags]
 
 Flags:
-  -c, --cmd string        (optional)
+  -c, --cmd string        command to exceute (optional)
   -h, --help              help for ssh
-  -i, --identity string   Command to exceute (required)
+  -i, --identity string   file from which the identity (private key) for public key authentication is read (required)
   -p, --port string       SSH port to us (optional) (default "22")
   -l, --user string       SSH user to us (optional) (default "ec2-user")
 
@@ -125,10 +125,10 @@ Usage:
 
 Flags:
   -h, --help              help for scp
-  -i, --identity string   (required)
+  -i, --identity string   File from which the identity (private key) for public key authentication is read (required)
   -p, --port string       SSH port to us (optional) (default "22")
-  -s, --source string     Source in the local host (required)
-  -t, --target string     Target in the remote host (required)
+  -s, --source string     source in the local host (required)
+  -t, --target string     target in the remote host (required)
   -l, --user string       SCP user to us (optional) (default "ec2-user")
 
 Global Flags:
