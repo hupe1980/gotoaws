@@ -27,7 +27,7 @@ scoop bucket add ec2connect https://github.com/hupe1980/ec2connect-bucket.git
 scoop install ec2connect
 ```
 
-## deb/rpm/apk:
+### deb/rpm/apk:
 
 Download the .deb, .rpm or .apk from the [releases page](https://github.com/hupe1980/ec2connect/releases) and install them with the appropriate tools.
 
