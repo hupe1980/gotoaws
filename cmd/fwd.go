@@ -38,7 +38,7 @@ func newFwdCmd() *cobra.Command {
 				},
 				Target: &instanceID,
 			}
-			session, err := internal.NewSession(cfg, input)
+			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
 				return err
 			}

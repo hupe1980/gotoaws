@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/signal"
+	"syscall"
 )
 
 func RunSubprocess(process string, args ...string) error {
@@ -11,6 +13,8 @@ func RunSubprocess(process string, args ...string) error {
 	call.Stderr = os.Stderr
 	call.Stdout = os.Stdout
 	call.Stdin = os.Stdin
+
+	signal.Ignore(syscall.SIGINT)
 
 	if err := call.Run(); err != nil {
 		return err

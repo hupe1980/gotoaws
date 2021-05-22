@@ -6,20 +6,66 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-type Session struct {
+type sessionOutput struct {
+	SessionId  *string
+	StreamUrl  *string
+	TokenValue *string
+}
+
+type session struct {
 	ID      string
 	client  *ssm.Client
-	output  *ssm.StartSessionOutput
+	output  *sessionOutput
 	input   *ssm.StartSessionInput
 	profile string
 	plugin  string
 	region  string
 }
 
-func NewSession(cfg *Config, input *ssm.StartSessionInput) (*Session, error) {
+type ECSSession interface {
+	Close() error
+	RunPlugin() error
+}
+
+type EC2Session interface {
+	Close() error
+	RunPlugin() error
+	ProxyCommand() (string, error)
+}
+
+func NewECSSession(cfg *Config, input *ecs.ExecuteCommandInput) (ECSSession, error) {
+	client := ecs.NewFromConfig(cfg.awsCfg)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	defer cancel()
+
+	output, err := client.ExecuteCommand(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &session{
+		ID:     *output.Session.SessionId,
+		client: ssm.NewFromConfig(cfg.awsCfg),
+		output: &sessionOutput{
+			SessionId:  output.Session.SessionId,
+			StreamUrl:  output.Session.StreamUrl,
+			TokenValue: output.Session.TokenValue,
+		},
+		input: &ssm.StartSessionInput{
+			Target: aws.String(fmt.Sprintf("ecs:%s_%s_%s", *input.Cluster, *input.Task, *input.Container)),
+		},
+		profile: cfg.profile,
+		plugin:  cfg.plugin,
+		region:  cfg.awsCfg.Region,
+	}, nil
+}
+
+func NewEC2Session(cfg *Config, input *ssm.StartSessionInput) (EC2Session, error) {
 	client := ssm.NewFromConfig(cfg.awsCfg)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
@@ -28,10 +74,14 @@ func NewSession(cfg *Config, input *ssm.StartSessionInput) (*Session, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Session{
-		ID:      *output.SessionId,
-		client:  client,
-		output:  output,
+	return &session{
+		ID:     *output.SessionId,
+		client: client,
+		output: &sessionOutput{
+			SessionId:  output.SessionId,
+			StreamUrl:  output.StreamUrl,
+			TokenValue: output.TokenValue,
+		},
 		input:   input,
 		profile: cfg.profile,
 		plugin:  cfg.plugin,
@@ -39,7 +89,7 @@ func NewSession(cfg *Config, input *ssm.StartSessionInput) (*Session, error) {
 	}, nil
 }
 
-func (sess *Session) Close() error {
+func (sess *session) Close() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
 
@@ -50,7 +100,7 @@ func (sess *Session) Close() error {
 	return nil
 }
 
-func (sess *Session) RunPlugin() error {
+func (sess *session) RunPlugin() error {
 	outputJson, err := json.Marshal(sess.output)
 	if err != nil {
 		return err
@@ -62,7 +112,7 @@ func (sess *Session) RunPlugin() error {
 	return RunSubprocess(sess.plugin, string(outputJson), sess.region, "StartSession", sess.profile, string(inputJson))
 }
 
-func (sess *Session) ProxyCommand() (string, error) {
+func (sess *session) ProxyCommand() (string, error) {
 	outputJson, err := json.Marshal(sess.output)
 	if err != nil {
 		return "", err

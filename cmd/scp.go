@@ -40,7 +40,7 @@ func newSCPCmd() *cobra.Command {
 				Parameters:   map[string][]string{"portNumber": {opts.port}},
 				Target:       &instanceID,
 			}
-			session, err := internal.NewSession(cfg, input)
+			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
 				return err
 			}

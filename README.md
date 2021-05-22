@@ -149,5 +149,40 @@ Global Flags:
       --profile string   AWS profile (optional) (default "default")
       --region string    AWS region (optional)
 ```
+
+## ECS
+```
+Usage:
+  awsconnect ecs [command]
+
+Available Commands:
+  exec        Exec into container
+
+Flags:
+  -h, --help   help for ecs
+
+Global Flags:
+      --profile string   AWS profile (optional) (default "default")
+      --region string    AWS region (optional)
+
+Use "awsconnect ecs [command] --help" for more information about a command.
+```
+
+### Exec into container
+```
+Usage:
+  awsconnect ecs exec [flags]
+
+Flags:
+      --cluster string     arn or name of the cluster (optional)
+  -c, --cmd string         command to exceute (optional) (default "/bin/sh")
+      --container string   name of the container. A container name only needs to be specified for tasks containing multiple containers. (optional)
+  -h, --help               help for exec
+      --task string        arn or id of the task (optional)
+
+Global Flags:
+      --profile string   AWS profile (optional) (default "default")
+      --region string    AWS region (optional)
+```
 ## License
 [MIT](LICENCE)

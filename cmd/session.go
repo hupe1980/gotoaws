@@ -24,7 +24,7 @@ func newSessionCmd() *cobra.Command {
 			}
 
 			input := &ssm.StartSessionInput{Target: &instanceID}
-			session, err := internal.NewSession(cfg, input)
+			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
 				panic(err)
 			}

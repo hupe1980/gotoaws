@@ -32,6 +32,8 @@ github.com/aws/aws-sdk-go-v2/internal/ini v1.0.0 h1:k7I9E6tyVWBo7H9ffpnxDWudtjau
 github.com/aws/aws-sdk-go-v2/internal/ini v1.0.0/go.mod h1:g3XMXuxvqSMUjnsXXp/960152w0wFS4CXVYgQaSVOHE=
 github.com/aws/aws-sdk-go-v2/service/ec2 v1.7.0 h1:gPcXFQLg+X/BM3GhEdhJRYC0af+Dh6G05y+37US95zk=
 github.com/aws/aws-sdk-go-v2/service/ec2 v1.7.0/go.mod h1:CJLhPUA/I2QWElaO0spinOqEBGNV6W8YF2Tivcz6tl8=
+github.com/aws/aws-sdk-go-v2/service/ecs v1.4.1 h1:XgXPy4L1g5KVhyAEn5agVSNB0PBalh5sI0Dm4KLFGmE=
+github.com/aws/aws-sdk-go-v2/service/ecs v1.4.1/go.mod h1:xqNV1bRJobA3QD870zptCh3t9uUbdWgReH+brKIt8As=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.1.0/go.mod h1:mruB7K2oMCoU0WhUeTV1CxpqoP7Q0N1uo5TXH4r2dZA=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.1.1 h1:l7pDLsmOGrnR8LT+3gIv8NlHpUhs7220E457KEC2UM0=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.1.1/go.mod h1:2+ehJPkdIdl46VCj67Emz/EH2hpebHZtaLdzqg+sWOI=
@@ -280,8 +282,9 @@ golang.org/x/sys v0.0.0-20190507160741-ecd444e8653b/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20190606165138-5da285871e9c/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190624142023-c5567b49c5d0/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae h1:/WDfKMnPU+m5M4xB+6x4kaepxRw6jWvR5iDRdvjHgy8=
 golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f h1:+Nyd8tzPX9R7BWHguqsrbFdRx3WQ/1ib8I44HXV5yTA=
+golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
