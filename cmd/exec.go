@@ -30,7 +30,9 @@ func newExecCmd() *cobra.Command {
 				Command:     &opts.cmd,
 				Cluster:     &opts.cluster,
 				Task:        &opts.task,
-				Container:   &opts.container,
+			}
+			if opts.container != "" {
+				input.Container = &opts.container
 			}
 			session, err := internal.NewECSSession(cfg, input)
 			if err != nil {
