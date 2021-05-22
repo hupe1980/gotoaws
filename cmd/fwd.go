@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/hupe1980/ec2connect/internal"
+	"github.com/hupe1980/awsconnect/internal"
 	"github.com/spf13/cobra"
 )
 

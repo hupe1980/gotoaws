@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/hupe1980/ec2connect/internal"
+	"github.com/hupe1980/awsconnect/internal"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
@@ -26,22 +26,21 @@ type rootOptions struct {
 func newRootCmd(version string) *cobra.Command {
 	opts := &rootOptions{}
 	cmd := &cobra.Command{
-		Use:     "ec2connect",
+		Use:     "awsconnect",
 		Version: version,
-		Short:   "ec2connect is an interactive CLI tool that you can use to connect to your EC2 instances",
-		Long: `ec2connect is an interactive CLI tool 
-that you can use to connect to your EC2 instances 
-using the AWS Systems Manager Session Manager.`,
+		Short:   "awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container)",
+		Long: `awsconnect is an interactive CLI tool 
+that you can use to connect to your AWS resources (EC2, ECS container) 
+using the AWS Systems Manager Session Manager. 
+It provides secure and auditable resource management without the need to open inbound ports, 
+maintain bastion hosts, or manage SSH keys.`,
 		SilenceErrors: true,
 	}
 	cmd.PersistentFlags().StringVarP(&opts.profile, "profile", "", "default", "AWS profile (optional)")
 	cmd.PersistentFlags().StringVarP(&opts.region, "region", "", "", "AWS region (optional)")
 	cmd.AddCommand(
-		newRunCmd(),
-		newFwdCmd(),
-		newSCPCmd(),
-		newSSHCmd(),
-		newSessionCmd(),
+		newEC2Cmd(),
+		newECSCmd(),
 		newCompletionCmd(),
 	)
 	return cmd

@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/hupe1980/ec2connect/internal"
+	"github.com/hupe1980/awsconnect/internal"
 	"github.com/spf13/cobra"
 )
 
