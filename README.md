@@ -6,6 +6,7 @@ awsconnect is an interactive CLI tool that you can use to connect to your AWS re
 - SSM Agent version 2.3.672.0 or later must be installed on the instances you want to connect to through sessions
 - An instance profile with proper IAM permissions (e.g AmazonSSMManagedInstanceCore)
 - A connection to the AWS System Manager Servive via NAT or better via [VPC Endpoint](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html) to further reduce the attack surface
+- [Prerequisites for using ECS Exec](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html)
 ## Installing
 You can install the pre-compiled binary in several different ways
 
