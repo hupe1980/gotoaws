@@ -47,7 +47,7 @@ brews:
       owner: hupe1980
       name: homebrew-awsconnect
     homepage:  https://github.com/hupe1980/awsconnect
-    description: awsconnect is an interactive CLI tool that you can use to connect to your EC2 instances using the AWS Systems Manager Session Manager
+    description: awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
     license: MIT
     test: |
       system "#{bin}/awsconnect -v"
@@ -61,12 +61,12 @@ scoop:
     owner: hupe1980
     name: awsconnect-bucket
   homepage:  https://github.com/hupe1980/awsconnect
-  description: awsconnect is an interactive CLI tool that you can use to connect to your EC2 instances using the AWS Systems Manager Session Manager
+  description: awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
   license: MIT
 nfpms:
   - file_name_template: '{{ .ProjectName }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     homepage:  https://github.com/hupe1980/awsconnect
-    description: awsconnect is an interactive CLI tool that you can use to connect to your EC2 instances using the AWS Systems Manager Session Manager
+    description: awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
     license: MIT
     contents:
       - src: ./completions/awsconnect.bash
