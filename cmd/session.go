@@ -10,6 +10,7 @@ func newSessionCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "session [name|ID|IP|DNS|_]",
 		Short:         "Start a session",
+		Example:       "awsconnect ec2 session myserver",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

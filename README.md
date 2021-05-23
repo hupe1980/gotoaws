@@ -80,6 +80,9 @@ Use "awsconnect ec2 [command] --help" for more information about a command.
 Usage:
   awsconnect ec2 session [name|ID|IP|DNS|_] [flags]
 
+Examples:
+awsconnect ec2 session myserver
+
 Flags:
   -h, --help   help for session
 
@@ -91,6 +94,9 @@ Global Flags:
 ```
 Usage:
   awsconnect ec2 fwd [name|ID|IP|DNS|_] [flags]
+
+Examples:
+awsconnect ec2 fwd run myserver -l 8080 -r 8080
 
 Flags:
   -h, --help            help for fwd
@@ -107,6 +113,9 @@ Global Flags:
 Usage:
   awsconnect ec2 run [name|ID|IP|DNS|_] [flags]
 
+Examples:
+awsconnect ec2 run myserver -c 'cat /etc/passwd'
+
 Flags:
   -c, --cmd string   command to exceute (required)
   -h, --help         help for run
@@ -120,6 +129,9 @@ Global Flags:
 ```
 Usage:
   awsconnect ec2 ssh [name|ID|IP|DNS|_] [flags]
+
+Examples:
+awsconnect ec2 ssh myserver -i key.pem
 
 Flags:
   -c, --cmd string        command to exceute (optional)
@@ -138,9 +150,12 @@ Global Flags:
 Usage:
   awsconnect ec2 scp [name|ID|IP|DNS|_] [flags]
 
+Examples:
+awsconnect ec2 scp myserver -i key.pem -s file.txt -t /opt/
+
 Flags:
   -h, --help              help for scp
-  -i, --identity string   File from which the identity (private key) for public key authentication is read (required)
+  -i, --identity string   file from which the identity (private key) for public key authentication is read (required)
   -p, --port string       SSH port to us (optional) (default "22")
   -s, --source string     source in the local host (required)
   -t, --target string     target in the remote host (required)

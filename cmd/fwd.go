@@ -16,6 +16,7 @@ func newFwdCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "fwd [name|ID|IP|DNS|_]",
 		Short:         "Port forwarding",
+		Example:       "awsconnect fwd run myserver -l 8080 -r 8080",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

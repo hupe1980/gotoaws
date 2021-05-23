@@ -16,6 +16,7 @@ func newRunCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "run [name|ID|IP|DNS|_]",
 		Short:         "Run commands",
+		Example:       "awsconnect ec2 run -c 'cat /etc/passwd'",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

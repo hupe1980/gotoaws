@@ -21,6 +21,7 @@ func newSCPCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "scp [name|ID|IP|DNS|_]",
 		Short:         "SCP over Session Manager",
+		Example:       "awsconnect ec2 scp myserver -i key.pem -s file.txt -t /opt/",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

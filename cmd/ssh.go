@@ -20,6 +20,7 @@ func newSSHCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "ssh [name|ID|IP|DNS|_]",
 		Short:         "SSH over Session Manager",
+		Example:       "awsconnect ssh myserver -i key.pem",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
