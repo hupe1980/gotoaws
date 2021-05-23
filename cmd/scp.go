@@ -62,11 +62,17 @@ func newSCPCmd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "SSH port to us (optional)")
 	cmd.Flags().StringVarP(&opts.user, "user", "l", "ec2-user", "SCP user to us (optional)")
 	cmd.Flags().StringVarP(&opts.source, "source", "s", "", "source in the local host (required)")
-	cmd.MarkFlagRequired("source")
+	if err := cmd.MarkFlagRequired("source"); err != nil {
+		panic(err)
+	}
 	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "target in the remote host (required)")
-	cmd.MarkFlagRequired("target")
+	if err := cmd.MarkFlagRequired("target"); err != nil {
+		panic(err)
+	}
 	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "file from which the identity (private key) for public key authentication is read", "(required)")
-	cmd.MarkFlagRequired("identity")
+	if err := cmd.MarkFlagRequired("identity"); err != nil {
+		panic(err)
+	}
 
 	return cmd
 }

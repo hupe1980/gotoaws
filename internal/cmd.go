@@ -59,19 +59,18 @@ func (cmd *Command) Result() (string, error) {
 	defer cancel()
 
 	for {
-		select {
-		case <-time.After(1 * time.Second):
-			output, err := cmd.client.GetCommandInvocation(ctx, input)
-			if err != nil {
-				return "", err
-			}
-			switch output.Status {
-			case types.CommandInvocationStatusPending, types.CommandInvocationStatusInProgress, types.CommandInvocationStatusDelayed:
-			case types.CommandInvocationStatusSuccess:
-				return *output.StandardOutputContent, nil
-			default:
-				return "", fmt.Errorf(*output.StandardErrorContent)
-			}
+		time.Sleep(1 * time.Second)
+
+		output, err := cmd.client.GetCommandInvocation(ctx, input)
+		if err != nil {
+			return "", err
+		}
+		switch output.Status {
+		case types.CommandInvocationStatusPending, types.CommandInvocationStatusInProgress, types.CommandInvocationStatusDelayed:
+		case types.CommandInvocationStatusSuccess:
+			return *output.StandardOutputContent, nil
+		default:
+			return "", fmt.Errorf(*output.StandardErrorContent)
 		}
 	}
 }

@@ -61,7 +61,9 @@ func newSSHCmd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.user, "user", "l", "ec2-user", "SSH user to us (optional)")
 	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "command to exceute (optional)")
 	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "file from which the identity (private key) for public key authentication is read", " (required)")
-	cmd.MarkFlagRequired("identity")
+	if err := cmd.MarkFlagRequired("identity"); err != nil {
+		panic(err)
+	}
 
 	return cmd
 }
