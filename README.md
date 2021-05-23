@@ -26,10 +26,6 @@ scoop install awsconnect
 
 Download the .deb, .rpm or .apk from the [releases page](https://github.com/hupe1980/awsconnect/releases) and install them with the appropriate tools.
 
-### go install:
-```bash
-go install github.com/hupe1980/awsconnect
-```
 ### manually:
 Download the pre-compiled binaries from the [releases page](https://github.com/hupe1980/awsconnect/releases) and copy to the desired location.
 
