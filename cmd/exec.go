@@ -47,7 +47,7 @@ func newExecCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.cluster, "cluster", "", "", "arn or name of the cluster (optional)")
+	cmd.Flags().StringVarP(&opts.cluster, "cluster", "", "default", "arn or name of the cluster (optional)")
 	cmd.Flags().StringVarP(&opts.task, "task", "", "", "arn or id of the task (optional)")
 	cmd.Flags().StringVarP(&opts.container, "container", "", "", "name of the container. A container name only needs to be specified for tasks containing multiple containers. (optional)")
 	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "/bin/sh", "command to exceute (optional)")

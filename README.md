@@ -188,7 +188,7 @@ Usage:
   awsconnect ecs exec [flags]
 
 Flags:
-      --cluster string     arn or name of the cluster (optional)
+      --cluster string     arn or name of the cluster (optional) (default "default")
   -c, --cmd string         command to exceute (optional) (default "/bin/sh")
       --container string   name of the container. A container name only needs to be specified for tasks containing multiple containers. (optional)
   -h, --help               help for exec
