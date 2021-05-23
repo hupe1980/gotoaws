@@ -115,9 +115,6 @@ func (sess *session) Close() error {
 }
 
 func (sess *session) RunPlugin() error {
-	ctx, cancel := context.WithTimeout(context.Background(), sess.timeout)
-	defer cancel()
-
 	sessJSON, err := json.Marshal(map[string]*string{
 		"SessionId":  sess.id,
 		"StreamUrl":  sess.streamUrl,
@@ -131,13 +128,10 @@ func (sess *session) RunPlugin() error {
 		return err
 	}
 
-	return runSubprocess(ctx, sess.plugin, string(sessJSON), sess.region, "StartSession", sess.profile, string(inputJSON))
+	return runSubprocess(sess.plugin, string(sessJSON), sess.region, "StartSession", sess.profile, string(inputJSON))
 }
 
 func (sess *session) RunSSH(input *RunSSHInput) error {
-	ctx, cancel := context.WithTimeout(context.Background(), sess.timeout)
-	defer cancel()
-
 	pc, err := sess.proxyCommand()
 	if err != nil {
 		return err
@@ -148,16 +142,13 @@ func (sess *session) RunSSH(input *RunSSHInput) error {
 			args = append(args, sep)
 		}
 	}
-	if err := runSubprocess(ctx, "ssh", args...); err != nil {
+	if err := runSubprocess("ssh", args...); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (sess *session) RunSCP(input *RunSCPInput) error {
-	ctx, cancel := context.WithTimeout(context.Background(), sess.timeout)
-	defer cancel()
-
 	pc, err := sess.proxyCommand()
 	if err != nil {
 		return err
@@ -168,7 +159,7 @@ func (sess *session) RunSCP(input *RunSCPInput) error {
 			args = append(args, sep)
 		}
 	}
-	if err := runSubprocess(ctx, "scp", args...); err != nil {
+	if err := runSubprocess("scp", args...); err != nil {
 		return err
 	}
 	return nil
@@ -192,8 +183,8 @@ func (sess *session) proxyCommand() (string, error) {
 	return pc, nil
 }
 
-func runSubprocess(ctx context.Context, process string, args ...string) error {
-	call := exec.CommandContext(ctx, process, args...)
+func runSubprocess(process string, args ...string) error {
+	call := exec.Command(process, args...)
 	call.Stderr = os.Stderr
 	call.Stdout = os.Stdout
 	call.Stdin = os.Stdin

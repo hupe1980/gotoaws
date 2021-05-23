@@ -26,7 +26,7 @@ ci: build test
 .PHONY: run
 ## run: Runs awsconnect
 run:
-	go run main.go ec2 run -c "cat /etc/passwd"
+	go run main.go ec2 session
 
 .PHONY: help
 ## help: Prints this help message
