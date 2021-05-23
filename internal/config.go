@@ -12,7 +12,8 @@ import (
 )
 
 type Config struct {
-	profile string
+	Profile string
+	Region  string
 	plugin  string
 	timeout time.Duration
 	awsCfg  aws.Config
@@ -47,7 +48,8 @@ https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-wor
 	}
 
 	return &Config{
-		profile: profile,
+		Profile: profile,
+		Region:  awsCfg.Region,
 		plugin:  pluginPath,
 		timeout: timeout,
 		awsCfg:  awsCfg,

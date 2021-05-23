@@ -65,7 +65,14 @@ func newConfig(cmd *cobra.Command) (*internal.Config, error) {
 		return nil, err
 	}
 
-	return internal.NewConfig(profile, region, timeout)
+	cfg, err := internal.NewConfig(profile, region, timeout)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("Using profile %s (Region %s)\n", cfg.Profile, cfg.Region)
+
+	return cfg, nil
 }
 
 func findInstance(cfg *internal.Config, args []string) (string, error) {

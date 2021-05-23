@@ -73,7 +73,7 @@ func NewECSSession(cfg *Config, input *ecs.ExecuteCommandInput) (ECSSession, err
 		input: &ssm.StartSessionInput{
 			Target: aws.String(fmt.Sprintf("ecs:%s_%s_%s", *input.Cluster, *input.Task, *input.Container)),
 		},
-		profile: cfg.profile,
+		profile: cfg.Profile,
 		plugin:  cfg.plugin,
 		region:  cfg.awsCfg.Region,
 		timeout: cfg.timeout,
@@ -96,9 +96,9 @@ func NewEC2Session(cfg *Config, input *ssm.StartSessionInput) (EC2Session, error
 		tokenValue: output.TokenValue,
 		client:     client,
 		input:      input,
-		profile:    cfg.profile,
+		profile:    cfg.Profile,
 		plugin:     cfg.plugin,
-		region:     cfg.awsCfg.Region,
+		region:     cfg.Region,
 		timeout:    cfg.timeout,
 	}, nil
 }
