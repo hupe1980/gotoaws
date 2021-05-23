@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -20,7 +19,7 @@ type Instance struct {
 }
 
 func FindPossibleInstances(cfg *Config) ([]Instance, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
 	defer cancel()
 
 	ec2Instances, managedInstances, err := findSSMManagedInstances(cfg)
@@ -71,7 +70,7 @@ func FindPossibleInstances(cfg *Config) ([]Instance, error) {
 
 func findSSMManagedInstances(cfg *Config) ([]ssmTypes.InstanceInformation, []ssmTypes.InstanceInformation, error) {
 	client := ssm.NewFromConfig(cfg.awsCfg)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
 	defer cancel()
 
 	onlineFilter := ssmTypes.InstanceInformationStringFilter{
@@ -102,7 +101,7 @@ func findSSMManagedInstances(cfg *Config) ([]ssmTypes.InstanceInformation, []ssm
 }
 
 func FindInstanceByIdentifier(cfg *Config, identifier string) ([]Instance, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
 	defer cancel()
 
 	input := &ec2.DescribeInstancesInput{

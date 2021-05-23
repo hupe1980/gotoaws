@@ -13,11 +13,12 @@ type Command struct {
 	client     *ssm.Client
 	instanceID string
 	output     *ssm.SendCommandOutput
+	timeout    time.Duration
 }
 
 func NewLinuxCommand(cfg *Config, instanceID string, command string) (*Command, error) {
 	client := ssm.NewFromConfig(cfg.awsCfg)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
 	defer cancel()
 
 	// only linux support (window = "AWS-RunPowerShellScript")
@@ -44,6 +45,7 @@ func NewLinuxCommand(cfg *Config, instanceID string, command string) (*Command, 
 		client:     client,
 		instanceID: instanceID,
 		output:     output,
+		timeout:    cfg.timeout,
 	}, nil
 }
 
@@ -53,7 +55,7 @@ func (cmd *Command) Result() (string, error) {
 		InstanceId: &cmd.instanceID,
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), cmd.timeout)
 	defer cancel()
 
 	for {

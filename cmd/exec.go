@@ -36,12 +36,12 @@ func newExecCmd() *cobra.Command {
 			}
 			session, err := internal.NewECSSession(cfg, input)
 			if err != nil {
-				panic(err)
+				return err
 			}
 			defer session.Close()
 
 			if err := session.RunPlugin(); err != nil {
-				panic(err)
+				return err
 			}
 			return nil
 		},

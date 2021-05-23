@@ -41,10 +41,11 @@ Available Commands:
   help        Help about any command
 
 Flags:
-  -h, --help             help for awsconnect
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
-  -v, --version          version for awsconnect
+  -h, --help               help for awsconnect
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
+  -v, --version            version for awsconnect
 
 Use "awsconnect [command] --help" for more information about a command.
 ```
@@ -66,15 +67,16 @@ Flags:
   -h, --help   help for ec2
 
 Global Flags:
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
 
 Use "awsconnect ec2 [command] --help" for more information about a command.
 ```
 #### Start a session
 ```
 Usage:
-  awsconnect ec2 session [name|ID|IP|DNS|_] [flags]
+  awsconnect ec2 session [name|ID|IP|DNS| ] [flags]
 
 Examples:
 awsconnect ec2 session myserver
@@ -83,16 +85,17 @@ Flags:
   -h, --help   help for session
 
 Global Flags:
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
 ```
 #### Port forwarding
 ```
 Usage:
-  awsconnect ec2 fwd [name|ID|IP|DNS|_] [flags]
+  awsconnect ec2 fwd [name|ID|IP|DNS| ] [flags]
 
 Examples:
-awsconnect ec2 fwd run myserver -l 8080 -r 8080
+awsconnect fwd run myserver -l 8080 -r 8080
 
 Flags:
   -h, --help            help for fwd
@@ -100,66 +103,70 @@ Flags:
   -r, --remote string   remote port to forward to (required)
 
 Global Flags:
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
 ```
 
 #### Run commands
 ```
 Usage:
-  awsconnect ec2 run [name|ID|IP|DNS|_] [flags]
+  awsconnect ec2 run [name|ID|IP|DNS| ] [flags]
 
 Examples:
-awsconnect ec2 run myserver -c 'cat /etc/passwd'
+awsconnect ec2 run -c 'cat /etc/passwd'
 
 Flags:
   -c, --cmd string   command to exceute (required)
   -h, --help         help for run
 
 Global Flags:
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
 ```
 
 #### SSH over Session Manager
 ```
 Usage:
-  awsconnect ec2 ssh [name|ID|IP|DNS|_] [flags]
+  awsconnect ec2 ssh [name|ID|IP|DNS| ] [flags]
 
 Examples:
-awsconnect ec2 ssh myserver -i key.pem
+awsconnect ssh myserver -i key.pem
 
 Flags:
   -c, --cmd string        command to exceute (optional)
   -h, --help              help for ssh
-  -i, --identity string   file from which the identity (private key) for public key authentication is read (required)
+  -i, --identity string    (required) (default "file from which the identity (private key) for public key authentication is read")
   -p, --port string       SSH port to us (optional) (default "22")
   -l, --user string       SSH user to us (optional) (default "ec2-user")
 
 Global Flags:
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
 ```
 
 #### SCP over Session Manager
 ```
 Usage:
-  awsconnect ec2 scp [name|ID|IP|DNS|_] [flags]
+  awsconnect ec2 scp [name|ID|IP|DNS| ] [flags]
 
 Examples:
 awsconnect ec2 scp myserver -i key.pem -s file.txt -t /opt/
 
 Flags:
   -h, --help              help for scp
-  -i, --identity string   file from which the identity (private key) for public key authentication is read (required)
+  -i, --identity string   (required) (default "file from which the identity (private key) for public key authentication is read")
   -p, --port string       SSH port to us (optional) (default "22")
   -s, --source string     source in the local host (required)
   -t, --target string     target in the remote host (required)
   -l, --user string       SCP user to us (optional) (default "ec2-user")
 
 Global Flags:
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
 ```
 
 ## ECS
@@ -176,8 +183,9 @@ Flags:
   -h, --help   help for ecs
 
 Global Flags:
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
 
 Use "awsconnect ecs [command] --help" for more information about a command.
 ```
@@ -195,8 +203,9 @@ Flags:
       --task string        arn or id of the task (optional)
 
 Global Flags:
-      --profile string   AWS profile (optional) (default "default")
-      --region string    AWS region (optional)
+      --profile string     AWS profile (optional) (default "default")
+      --region string      AWS region (optional)
+      --timeout duration   timeout for network requests (default 15s)
 ```
 ## License
 [MIT](LICENCE)

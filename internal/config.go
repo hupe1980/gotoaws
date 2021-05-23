@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -13,10 +14,11 @@ import (
 type Config struct {
 	profile string
 	plugin  string
+	timeout time.Duration
 	awsCfg  aws.Config
 }
 
-func NewConfig(profile string, region string) (*Config, error) {
+func NewConfig(profile string, region string, timeout time.Duration) (*Config, error) {
 	if profile == "" {
 		profile = "default"
 		if os.Getenv("AWS_PROFILE") != "" {
@@ -47,20 +49,7 @@ https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-wor
 	return &Config{
 		profile: profile,
 		plugin:  pluginPath,
+		timeout: timeout,
 		awsCfg:  awsCfg,
 	}, nil
-}
-
-func LoadDefaultConfig(profile string) (aws.Config, error) {
-	if profile == "" {
-		profile = "default"
-		if os.Getenv("AWS_PROFILE") != "" {
-			profile = os.Getenv("AWS_PROFILE")
-		}
-	}
-
-	return config.LoadDefaultConfig(
-		context.TODO(),
-		config.WithSharedConfigProfile(profile),
-	)
 }

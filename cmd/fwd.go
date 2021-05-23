@@ -14,7 +14,7 @@ type fwdOptions struct {
 func newFwdCmd() *cobra.Command {
 	opts := &fwdOptions{}
 	cmd := &cobra.Command{
-		Use:           "fwd [name|ID|IP|DNS|_]",
+		Use:           "fwd [name|ID|IP|DNS| ]",
 		Short:         "Port forwarding",
 		Example:       "awsconnect fwd run myserver -l 8080 -r 8080",
 		SilenceUsage:  true,

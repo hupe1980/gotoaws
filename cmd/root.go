@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/hupe1980/awsconnect/internal"
 	"github.com/manifoldco/promptui"
@@ -21,6 +22,7 @@ func Execute(version string) {
 type rootOptions struct {
 	profile string
 	region  string
+	timeout time.Duration
 }
 
 func newRootCmd(version string) *cobra.Command {
@@ -38,6 +40,7 @@ maintain bastion hosts, or manage SSH keys.`,
 	}
 	cmd.PersistentFlags().StringVarP(&opts.profile, "profile", "", "default", "AWS profile (optional)")
 	cmd.PersistentFlags().StringVarP(&opts.region, "region", "", "", "AWS region (optional)")
+	cmd.PersistentFlags().DurationVarP(&opts.timeout, "timeout", "", time.Second*15, "timeout for network requests")
 	cmd.AddCommand(
 		newEC2Cmd(),
 		newECSCmd(),
@@ -57,7 +60,12 @@ func newConfig(cmd *cobra.Command) (*internal.Config, error) {
 		return nil, err
 	}
 
-	return internal.NewConfig(profile, region)
+	timeout, err := cmd.Root().PersistentFlags().GetDuration("timeout")
+	if err != nil {
+		return nil, err
+	}
+
+	return internal.NewConfig(profile, region, timeout)
 }
 
 func findInstance(cfg *internal.Config, args []string) (string, error) {

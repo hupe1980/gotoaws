@@ -4,12 +4,32 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/exec"
+	"os/signal"
+	"strings"
+	"syscall"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
+
+type RunSSHInput struct {
+	User       *string
+	InstanceID *string
+	Identity   *string
+	Command    *string
+}
+
+type RunSCPInput struct {
+	User       *string
+	InstanceID *string
+	Identity   *string
+	Source     *string
+	Target     *string
+}
 
 type session struct {
 	id         *string
@@ -20,6 +40,7 @@ type session struct {
 	profile    string
 	plugin     string
 	region     string
+	timeout    time.Duration
 }
 
 type ECSSession interface {
@@ -30,12 +51,13 @@ type ECSSession interface {
 type EC2Session interface {
 	Close() error
 	RunPlugin() error
-	ProxyCommand() (string, error)
+	RunSSH(input *RunSSHInput) error
+	RunSCP(input *RunSCPInput) error
 }
 
 func NewECSSession(cfg *Config, input *ecs.ExecuteCommandInput) (ECSSession, error) {
 	client := ecs.NewFromConfig(cfg.awsCfg)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
 	defer cancel()
 
 	output, err := client.ExecuteCommand(ctx, input)
@@ -54,12 +76,13 @@ func NewECSSession(cfg *Config, input *ecs.ExecuteCommandInput) (ECSSession, err
 		profile: cfg.profile,
 		plugin:  cfg.plugin,
 		region:  cfg.awsCfg.Region,
+		timeout: cfg.timeout,
 	}, nil
 }
 
 func NewEC2Session(cfg *Config, input *ssm.StartSessionInput) (EC2Session, error) {
 	client := ssm.NewFromConfig(cfg.awsCfg)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
 	defer cancel()
 
 	output, err := client.StartSession(ctx, input)
@@ -76,11 +99,12 @@ func NewEC2Session(cfg *Config, input *ssm.StartSessionInput) (EC2Session, error
 		profile:    cfg.profile,
 		plugin:     cfg.plugin,
 		region:     cfg.awsCfg.Region,
+		timeout:    cfg.timeout,
 	}, nil
 }
 
 func (sess *session) Close() error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	ctx, cancel := context.WithTimeout(context.Background(), sess.timeout)
 	defer cancel()
 
 	_, err := sess.client.TerminateSession(ctx, &ssm.TerminateSessionInput{SessionId: sess.id})
@@ -91,19 +115,66 @@ func (sess *session) Close() error {
 }
 
 func (sess *session) RunPlugin() error {
+	ctx, cancel := context.WithTimeout(context.Background(), sess.timeout)
+	defer cancel()
+
 	sessJSON, err := json.Marshal(map[string]*string{
 		"SessionId":  sess.id,
 		"StreamUrl":  sess.streamUrl,
 		"TokenValue": sess.tokenValue,
 	})
+	if err != nil {
+		return err
+	}
 	inputJSON, err := json.Marshal(sess.input)
 	if err != nil {
 		return err
 	}
-	return RunSubprocess(sess.plugin, string(sessJSON), sess.region, "StartSession", sess.profile, string(inputJSON))
+
+	return runSubprocess(ctx, sess.plugin, string(sessJSON), sess.region, "StartSession", sess.profile, string(inputJSON))
 }
 
-func (sess *session) ProxyCommand() (string, error) {
+func (sess *session) RunSSH(input *RunSSHInput) error {
+	ctx, cancel := context.WithTimeout(context.Background(), sess.timeout)
+	defer cancel()
+
+	pc, err := sess.proxyCommand()
+	if err != nil {
+		return err
+	}
+	args := []string{"-o", pc}
+	for _, sep := range strings.Split(sshArgs(*input.User, *input.InstanceID, *input.Identity, *input.Command), " ") {
+		if sep != "" {
+			args = append(args, sep)
+		}
+	}
+	if err := runSubprocess(ctx, "ssh", args...); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (sess *session) RunSCP(input *RunSCPInput) error {
+	ctx, cancel := context.WithTimeout(context.Background(), sess.timeout)
+	defer cancel()
+
+	pc, err := sess.proxyCommand()
+	if err != nil {
+		return err
+	}
+	args := []string{"-o", pc}
+	for _, sep := range strings.Split(scpArgs(*input.User, *input.InstanceID, *input.Identity, *input.Source, *input.Target), " ") {
+		if sep != "" {
+			args = append(args, sep)
+		}
+	}
+	if err := runSubprocess(ctx, "scp", args...); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (sess *session) proxyCommand() (string, error) {
 	sessJSON, err := json.Marshal(map[string]*string{
 		"SessionId":  sess.id,
 		"StreamUrl":  sess.streamUrl,
@@ -116,6 +187,33 @@ func (sess *session) ProxyCommand() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	pc := fmt.Sprintf("ProxyCommand=%s '%s' %s %s %s '%s'", sess.plugin, string(sessJSON), sess.region, "StartSession", sess.profile, string(inputJSON))
 	return pc, nil
+}
+
+func runSubprocess(ctx context.Context, process string, args ...string) error {
+	call := exec.CommandContext(ctx, process, args...)
+	call.Stderr = os.Stderr
+	call.Stdout = os.Stdout
+	call.Stdin = os.Stdin
+
+	signal.Ignore(syscall.SIGINT)
+
+	if err := call.Run(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func sshArgs(user string, instanceID string, identity string, cmd string) string {
+	ssh := fmt.Sprintf("-i %s %s@%s", identity, user, instanceID)
+	if cmd == "" {
+		return ssh
+	}
+	return fmt.Sprintf("%s %s", ssh, cmd)
+}
+
+func scpArgs(user string, instanceID string, identity string, source string, target string) string {
+	return fmt.Sprintf("-i %s %s %s@%s:%s", identity, source, user, instanceID, target)
 }

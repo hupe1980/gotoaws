@@ -14,7 +14,7 @@ type runOptions struct {
 func newRunCmd() *cobra.Command {
 	opts := &runOptions{}
 	cmd := &cobra.Command{
-		Use:           "run [name|ID|IP|DNS|_]",
+		Use:           "run [name|ID|IP|DNS| ]",
 		Short:         "Run commands",
 		Example:       "awsconnect ec2 run -c 'cat /etc/passwd'",
 		SilenceUsage:  true,
@@ -37,9 +37,11 @@ func newRunCmd() *cobra.Command {
 				return err
 			}
 			fmt.Println(res)
+
 			return nil
 		},
 	}
+
 	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "command to exceute (required)")
 	cmd.MarkFlagRequired("cmd")
 

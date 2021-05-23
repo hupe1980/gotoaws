@@ -8,7 +8,7 @@ import (
 
 func newSessionCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:           "session [name|ID|IP|DNS|_]",
+		Use:           "session [name|ID|IP|DNS| ]",
 		Short:         "Start a session",
 		Example:       "awsconnect ec2 session myserver",
 		SilenceUsage:  true,
@@ -27,12 +27,12 @@ func newSessionCmd() *cobra.Command {
 			input := &ssm.StartSessionInput{Target: &instanceID}
 			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
-				panic(err)
+				return err
 			}
 			defer session.Close()
 
 			if err := session.RunPlugin(); err != nil {
-				panic(err)
+				return err
 			}
 			return nil
 		},

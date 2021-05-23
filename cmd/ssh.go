@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"strings"
-
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/hupe1980/awsconnect/internal"
 	"github.com/spf13/cobra"
@@ -18,7 +16,7 @@ type sshOptions struct {
 func newSSHCmd() *cobra.Command {
 	opts := &sshOptions{}
 	cmd := &cobra.Command{
-		Use:           "ssh [name|ID|IP|DNS|_]",
+		Use:           "ssh [name|ID|IP|DNS| ]",
 		Short:         "SSH over Session Manager",
 		Example:       "awsconnect ssh myserver -i key.pem",
 		SilenceUsage:  true,
@@ -42,26 +40,23 @@ func newSSHCmd() *cobra.Command {
 			}
 			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
-				panic(err)
+				return err
 			}
 			defer session.Close()
 
-			pc, err := session.ProxyCommand()
-			if err != nil {
-				panic(err)
+			if err := session.RunSSH(&internal.RunSSHInput{
+				User:       &opts.user,
+				InstanceID: &instanceID,
+				Identity:   &opts.identity,
+				Command:    &opts.cmd,
+			}); err != nil {
+				return err
 			}
-			sshArgs := []string{"-o", pc}
-			for _, sep := range strings.Split(internal.SSHArgs(opts.user, instanceID, opts.identity, opts.cmd), " ") {
-				if sep != "" {
-					sshArgs = append(sshArgs, sep)
-				}
-			}
-			if err := internal.RunSubprocess("ssh", sshArgs...); err != nil {
-				panic(err)
-			}
+
 			return nil
 		},
 	}
+
 	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "SSH port to us (optional)")
 	cmd.Flags().StringVarP(&opts.user, "user", "l", "ec2-user", "SSH user to us (optional)")
 	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "command to exceute (optional)")

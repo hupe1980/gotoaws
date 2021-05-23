@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"strings"
-
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/hupe1980/awsconnect/internal"
 	"github.com/spf13/cobra"
@@ -19,7 +17,7 @@ type scpOptions struct {
 func newSCPCmd() *cobra.Command {
 	opts := &scpOptions{}
 	cmd := &cobra.Command{
-		Use:           "scp [name|ID|IP|DNS|_]",
+		Use:           "scp [name|ID|IP|DNS| ]",
 		Short:         "SCP over Session Manager",
 		Example:       "awsconnect ec2 scp myserver -i key.pem -s file.txt -t /opt/",
 		SilenceUsage:  true,
@@ -47,19 +45,16 @@ func newSCPCmd() *cobra.Command {
 			}
 			defer session.Close()
 
-			pc, err := session.ProxyCommand()
-			if err != nil {
+			if err := session.RunSCP(&internal.RunSCPInput{
+				User:       &opts.user,
+				InstanceID: &instanceID,
+				Identity:   &opts.identity,
+				Source:     &opts.source,
+				Target:     &opts.target,
+			}); err != nil {
 				return err
 			}
-			scpArgs := []string{"-o", pc}
-			for _, sep := range strings.Split(internal.SCPArgs(opts.user, instanceID, opts.identity, opts.source, opts.target), " ") {
-				if sep != "" {
-					scpArgs = append(scpArgs, sep)
-				}
-			}
-			if err := internal.RunSubprocess("scp", scpArgs...); err != nil {
-				return err
-			}
+
 			return nil
 		},
 	}
