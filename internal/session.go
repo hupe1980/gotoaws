@@ -66,6 +66,7 @@ func NewEC2Session(cfg *Config, input *ssm.StartSessionInput) (EC2Session, error
 	if err != nil {
 		return nil, err
 	}
+
 	return &session{
 		id:         output.SessionId,
 		streamUrl:  output.StreamUrl,
@@ -90,20 +91,20 @@ func (sess *session) Close() error {
 }
 
 func (sess *session) RunPlugin() error {
-	outputJson, err := json.Marshal(map[string]*string{
+	sessJSON, err := json.Marshal(map[string]*string{
 		"SessionId":  sess.id,
 		"StreamUrl":  sess.streamUrl,
 		"TokenValue": sess.tokenValue,
 	})
-	inputJson, err := json.Marshal(sess.input)
+	inputJSON, err := json.Marshal(sess.input)
 	if err != nil {
 		return err
 	}
-	return RunSubprocess(sess.plugin, string(outputJson), sess.region, "StartSession", sess.profile, string(inputJson))
+	return RunSubprocess(sess.plugin, string(sessJSON), sess.region, "StartSession", sess.profile, string(inputJSON))
 }
 
 func (sess *session) ProxyCommand() (string, error) {
-	outputJson, err := json.Marshal(map[string]*string{
+	sessJSON, err := json.Marshal(map[string]*string{
 		"SessionId":  sess.id,
 		"StreamUrl":  sess.streamUrl,
 		"TokenValue": sess.tokenValue,
@@ -111,10 +112,10 @@ func (sess *session) ProxyCommand() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	inputJson, err := json.Marshal(sess.input)
+	inputJSON, err := json.Marshal(sess.input)
 	if err != nil {
 		return "", err
 	}
-	pc := fmt.Sprintf("ProxyCommand=%s '%s' %s %s %s '%s'", sess.plugin, string(outputJson), sess.region, "StartSession", sess.profile, string(inputJson))
+	pc := fmt.Sprintf("ProxyCommand=%s '%s' %s %s %s '%s'", sess.plugin, string(sessJSON), sess.region, "StartSession", sess.profile, string(inputJSON))
 	return pc, nil
 }
