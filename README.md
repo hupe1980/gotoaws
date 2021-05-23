@@ -163,6 +163,8 @@ Global Flags:
 ```
 
 ## ECS
+You can directly interact with containers without needing to first interact with the host container operating system, open inbound ports, or manage SSH keys.
+ 
 ```
 Usage:
   awsconnect ecs [command]
