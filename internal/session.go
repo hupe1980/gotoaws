@@ -35,7 +35,7 @@ type RunSCPInput struct {
 	User       string
 	InstanceID string
 	Identity   string
-	Source     []string
+	Sources    []string
 	Target     string
 	Mode       SCPMode
 }
@@ -146,7 +146,7 @@ func (sess *session) RunSSH(input *RunSSHInput) error {
 		return err
 	}
 	args := []string{"-o", pc}
-	for _, sep := range strings.Split(sshArgs(input.User, input.InstanceID, input.Identity, input.LocalPortForwarding, input.Command), " ") {
+	for _, sep := range strings.Split(sshArgs(input), " ") {
 		if sep != "" {
 			args = append(args, sep)
 		}
@@ -163,7 +163,7 @@ func (sess *session) RunSCP(input *RunSCPInput) error {
 		return err
 	}
 	args := []string{"-o", pc}
-	for _, sep := range strings.Split(scpArgs(input.User, input.InstanceID, input.Identity, input.Mode, input.Source, input.Target), " ") {
+	for _, sep := range strings.Split(scpArgs(input), " ") {
 		if sep != "" {
 			args = append(args, sep)
 		}
@@ -207,24 +207,24 @@ func runSubprocess(process string, args ...string) error {
 	return nil
 }
 
-func sshArgs(user string, instanceID string, identity string, fwd string, cmd string) string {
-	ssh := fmt.Sprintf("-i %s %s@%s", identity, user, instanceID)
-	if fwd != "" {
-		ssh = fmt.Sprintf("-L %s %s", fwd, ssh)
+func sshArgs(input *RunSSHInput) string {
+	ssh := fmt.Sprintf("-i %s %s@%s", input.Identity, input.User, input.InstanceID)
+	if input.LocalPortForwarding != "" {
+		ssh = fmt.Sprintf("-L %s %s", input.LocalPortForwarding, ssh)
 	}
-	if cmd != "" {
-		ssh = fmt.Sprintf("%s %s", ssh, cmd)
+	if input.Command != "" {
+		ssh = fmt.Sprintf("%s %s", ssh, input.Command)
 	}
 	return ssh
 }
 
-func scpArgs(user string, instanceID string, identity string, mode SCPMode, sources []string, target string) string {
-	if mode == SCPModeSending {
-		return fmt.Sprintf("-i %s %s %s@%s:%s", identity, strings.Join(sources, " "), user, instanceID, target)
+func scpArgs(input *RunSCPInput) string {
+	if input.Mode == SCPModeSending {
+		return fmt.Sprintf("-i %s %s %s@%s:%s", input.Identity, strings.Join(input.Sources, " "), input.User, input.InstanceID, input.Target)
 	}
-	s := sources[0]
-	if len(sources) > 1 {
-		s = fmt.Sprintf("{%s}", strings.Join(sources, ","))
+	s := input.Sources[0]
+	if len(input.Sources) > 1 {
+		s = fmt.Sprintf("{%s}", strings.Join(input.Sources, ","))
 	}
-	return fmt.Sprintf("-i %s %s@%s:%s %s", identity, user, instanceID, s, target)
+	return fmt.Sprintf("-i %s %s@%s:%s %s", input.Identity, input.User, input.InstanceID, s, input.Target)
 }

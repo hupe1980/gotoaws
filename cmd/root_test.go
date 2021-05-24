@@ -14,6 +14,7 @@ func TestRootCmdHelp(t *testing.T) {
 	cmd.SetArgs([]string{"-h"})
 	require.NoError(t, cmd.Execute())
 }
+
 func TestRootCmdVersion(t *testing.T) {
 	var b bytes.Buffer
 	cmd := newRootCmd("1.2.3")

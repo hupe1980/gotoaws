@@ -57,7 +57,7 @@ func newSCPCmd() *cobra.Command {
 				User:       opts.user,
 				InstanceID: instanceID,
 				Identity:   opts.identity,
-				Source:     args[:pos],
+				Sources:    args[:pos],
 				Target:     args[pos],
 				Mode:       mode,
 			}); err != nil {
