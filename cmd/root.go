@@ -70,7 +70,7 @@ func newConfig(cmd *cobra.Command) (*internal.Config, error) {
 		return nil, err
 	}
 
-	fmt.Printf("Using profile %s (Region %s)\n", cfg.Profile, cfg.Region)
+	fmt.Printf("%s Profile: %s (%s)\n", promptui.IconGood, cfg.Profile, cfg.Region)
 
 	return cfg, nil
 }
@@ -120,4 +120,51 @@ func chooseInstance(instances []internal.Instance) (string, error) {
 		return "", err
 	}
 	return instances[i].ID, nil
+}
+
+func findContainer(cfg *internal.Config, cluster string, task string, cname string) (string, string, error) {
+	if task != "" {
+		containers, err := internal.FindPossibleContainerByIdentifier(cfg, cluster, task, cname)
+		if err != nil {
+			return "", "", err
+		}
+		if len(containers) > 1 {
+			return chooseContainer(containers)
+		}
+		return containers[0].Task, containers[0].Name, nil
+	}
+	containers, err := internal.FindPossibleContainers(cfg, cluster)
+	if err != nil {
+		return "", "", err
+	}
+	return chooseContainer(containers)
+}
+
+func chooseContainer(containers []internal.Container) (string, string, error) {
+	templates := &promptui.SelectTemplates{
+		Active:   fmt.Sprintf(`%s {{ .Name | cyan | bold }} ({{ .Task }})`, promptui.IconSelect),
+		Inactive: `   {{ .Name | cyan }} ({{ .ID }})`,
+		Selected: fmt.Sprintf(`%s {{ "Container" | bold }}: {{ .Name | cyan }} ({{ .Task }})`, promptui.IconGood),
+	}
+
+	searcher := func(input string, index int) bool {
+		container := containers[index]
+		name := strings.Replace(strings.ToLower(container.Name), " ", "", -1)
+		input = strings.Replace(strings.ToLower(input), " ", "", -1)
+
+		return strings.Contains(name, input)
+	}
+
+	prompt := promptui.Select{
+		Label:     "Choose a container",
+		Items:     containers,
+		Templates: templates,
+		Size:      15,
+		Searcher:  searcher,
+	}
+	i, _, err := prompt.Run()
+	if err != nil {
+		return "", "", err
+	}
+	return containers[i].Task, containers[i].Name, nil
 }

@@ -185,6 +185,9 @@ Usage:
 Available Commands:
   exec        Exec into container
 
+Examples:
+awsconnect ecs exec --cluster demo-cluster
+
 Flags:
   -h, --help   help for ecs
 

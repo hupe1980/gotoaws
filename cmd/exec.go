@@ -20,19 +20,24 @@ func newExecCmd() *cobra.Command {
 		Short:         "Exec into container",
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		Example:       "awsconnect ecs exec --cluster demo-cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := newConfig(cmd)
 			if err != nil {
 				return err
 			}
+
+			task, container, err := findContainer(cfg, opts.cluster, opts.task, opts.container)
+			if err != nil {
+				return err
+			}
+
 			input := &ecs.ExecuteCommandInput{
 				Interactive: true,
 				Command:     &opts.cmd,
 				Cluster:     &opts.cluster,
-				Task:        &opts.task,
-			}
-			if opts.container != "" {
-				input.Container = &opts.container
+				Task:        &task,
+				Container:   &container,
 			}
 			session, err := internal.NewECSSession(cfg, input)
 			if err != nil {
