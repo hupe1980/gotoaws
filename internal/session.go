@@ -16,19 +16,28 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
+type SCPMode string
+
+const (
+	SCPModeSending   SCPMode = "sending"
+	SCPModeReceiving SCPMode = "receiving"
+)
+
 type RunSSHInput struct {
-	User       *string
-	InstanceID *string
-	Identity   *string
-	Command    *string
+	User                string
+	InstanceID          string
+	Identity            string
+	LocalPortForwarding string
+	Command             string
 }
 
 type RunSCPInput struct {
-	User       *string
-	InstanceID *string
-	Identity   *string
-	Source     *string
-	Target     *string
+	User       string
+	InstanceID string
+	Identity   string
+	Source     []string
+	Target     string
+	Mode       SCPMode
 }
 
 type session struct {
@@ -137,7 +146,7 @@ func (sess *session) RunSSH(input *RunSSHInput) error {
 		return err
 	}
 	args := []string{"-o", pc}
-	for _, sep := range strings.Split(sshArgs(*input.User, *input.InstanceID, *input.Identity, *input.Command), " ") {
+	for _, sep := range strings.Split(sshArgs(input.User, input.InstanceID, input.Identity, input.LocalPortForwarding, input.Command), " ") {
 		if sep != "" {
 			args = append(args, sep)
 		}
@@ -154,11 +163,12 @@ func (sess *session) RunSCP(input *RunSCPInput) error {
 		return err
 	}
 	args := []string{"-o", pc}
-	for _, sep := range strings.Split(scpArgs(*input.User, *input.InstanceID, *input.Identity, *input.Source, *input.Target), " ") {
+	for _, sep := range strings.Split(scpArgs(input.User, input.InstanceID, input.Identity, input.Mode, input.Source, input.Target), " ") {
 		if sep != "" {
 			args = append(args, sep)
 		}
 	}
+	fmt.Println(strings.Join(args, " "))
 	if err := runSubprocess("scp", args...); err != nil {
 		return err
 	}
@@ -197,14 +207,24 @@ func runSubprocess(process string, args ...string) error {
 	return nil
 }
 
-func sshArgs(user string, instanceID string, identity string, cmd string) string {
+func sshArgs(user string, instanceID string, identity string, fwd string, cmd string) string {
 	ssh := fmt.Sprintf("-i %s %s@%s", identity, user, instanceID)
-	if cmd == "" {
-		return ssh
+	if fwd != "" {
+		ssh = fmt.Sprintf("-L %s %s", fwd, ssh)
 	}
-	return fmt.Sprintf("%s %s", ssh, cmd)
+	if cmd != "" {
+		ssh = fmt.Sprintf("%s %s", ssh, cmd)
+	}
+	return ssh
 }
 
-func scpArgs(user string, instanceID string, identity string, source string, target string) string {
-	return fmt.Sprintf("-i %s %s %s@%s:%s", identity, source, user, instanceID, target)
+func scpArgs(user string, instanceID string, identity string, mode SCPMode, sources []string, target string) string {
+	if mode == SCPModeSending {
+		return fmt.Sprintf("-i %s %s %s@%s:%s", identity, strings.Join(sources, " "), user, instanceID, target)
+	}
+	s := sources[0]
+	if len(sources) > 1 {
+		s = fmt.Sprintf("{%s}", strings.Join(sources, ","))
+	}
+	return fmt.Sprintf("-i %s %s@%s:%s %s", identity, user, instanceID, s, target)
 }

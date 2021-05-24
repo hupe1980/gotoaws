@@ -38,9 +38,9 @@ It provides secure and auditable resource management without the need to open in
 maintain bastion hosts, or manage SSH keys.`,
 		SilenceErrors: true,
 	}
-	cmd.PersistentFlags().StringVarP(&opts.profile, "profile", "", "default", "AWS profile (optional)")
-	cmd.PersistentFlags().StringVarP(&opts.region, "region", "", "", "AWS region (optional)")
-	cmd.PersistentFlags().DurationVarP(&opts.timeout, "timeout", "", time.Second*15, "timeout for network requests")
+	cmd.PersistentFlags().StringVar(&opts.profile, "profile", "default", "AWS profile (optional)")
+	cmd.PersistentFlags().StringVar(&opts.region, "region", "", "AWS region (optional)")
+	cmd.PersistentFlags().DurationVar(&opts.timeout, "timeout", time.Second*15, "timeout for network requests")
 	cmd.AddCommand(
 		newEC2Cmd(),
 		newECSCmd(),
@@ -75,9 +75,8 @@ func newConfig(cmd *cobra.Command) (*internal.Config, error) {
 	return cfg, nil
 }
 
-func findInstance(cfg *internal.Config, args []string) (string, error) {
-	if len(args) > 0 {
-		identifier := args[0]
+func findInstance(cfg *internal.Config, identifier string) (string, error) {
+	if identifier != "" {
 		instances, err := internal.FindInstanceByIdentifier(cfg, identifier)
 		if err != nil {
 			panic(err)

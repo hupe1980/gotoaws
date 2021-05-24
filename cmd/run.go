@@ -8,15 +8,16 @@ import (
 )
 
 type runOptions struct {
-	cmd string
+	target string
+	cmd    string
 }
 
 func newRunCmd() *cobra.Command {
 	opts := &runOptions{}
 	cmd := &cobra.Command{
-		Use:           "run [name|ID|IP|DNS| ]",
+		Use:           "run",
 		Short:         "Run commands",
-		Example:       "awsconnect ec2 run -c 'cat /etc/passwd'",
+		Example:       "awsconnect ec2 run -t myserver -c 'cat /etc/passwd'",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -24,7 +25,7 @@ func newRunCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			instanceID, err := findInstance(cfg, args)
+			instanceID, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
@@ -42,6 +43,7 @@ func newRunCmd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "name|ID|IP|DNS of the instance (optional)")
 	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "command to exceute (required)")
 	if err := cmd.MarkFlagRequired("cmd"); err != nil {
 		panic(err)

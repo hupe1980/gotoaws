@@ -6,11 +6,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type sessionOptions struct {
+	target string
+}
+
 func newSessionCmd() *cobra.Command {
+	opts := &sessionOptions{}
 	cmd := &cobra.Command{
-		Use:           "session [name|ID|IP|DNS| ]",
+		Use:           "session",
 		Short:         "Start a session",
-		Example:       "awsconnect ec2 session myserver",
+		Example:       "awsconnect ec2 session -t myserver",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -19,7 +24,7 @@ func newSessionCmd() *cobra.Command {
 				return err
 			}
 
-			instanceID, err := findInstance(cfg, args)
+			instanceID, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
@@ -37,6 +42,8 @@ func newSessionCmd() *cobra.Command {
 			return nil
 		},
 	}
+
+	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "name|ID|IP|DNS of the instance (optional)")
 
 	return cmd
 }

@@ -1,24 +1,27 @@
 package cmd
 
 import (
+	"strings"
+
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/hupe1980/awsconnect/internal"
 	"github.com/spf13/cobra"
 )
 
 type sshOptions struct {
+	target   string
 	port     string
 	user     string
 	identity string
-	cmd      string
+	fwd      string
 }
 
 func newSSHCmd() *cobra.Command {
 	opts := &sshOptions{}
 	cmd := &cobra.Command{
-		Use:           "ssh [name|ID|IP|DNS| ]",
+		Use:           "ssh [command]",
 		Short:         "SSH over Session Manager",
-		Example:       "awsconnect ssh myserver -i key.pem",
+		Example:       "awsconnect ssh -t myserver -i key.pem",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -27,7 +30,7 @@ func newSSHCmd() *cobra.Command {
 				return err
 			}
 
-			instanceID, err := findInstance(cfg, args)
+			instanceID, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
@@ -45,10 +48,11 @@ func newSSHCmd() *cobra.Command {
 			defer session.Close()
 
 			if err := session.RunSSH(&internal.RunSSHInput{
-				User:       &opts.user,
-				InstanceID: &instanceID,
-				Identity:   &opts.identity,
-				Command:    &opts.cmd,
+				User:                opts.user,
+				InstanceID:          instanceID,
+				Identity:            opts.identity,
+				LocalPortForwarding: opts.fwd,
+				Command:             strings.Join(args, " "),
 			}); err != nil {
 				return err
 			}
@@ -57,10 +61,11 @@ func newSSHCmd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "name|ID|IP|DNS of the instance (optional)")
+	cmd.Flags().StringVarP(&opts.fwd, "lforward", "L", "", "local port forwarding (optional)")
 	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "SSH port to us (optional)")
 	cmd.Flags().StringVarP(&opts.user, "user", "l", "ec2-user", "SSH user to us (optional)")
-	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "command to exceute (optional)")
-	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "file from which the identity (private key) for public key authentication is read", " (required)")
+	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "", "file from which the identity (private key) for public key authentication is read (required)")
 	if err := cmd.MarkFlagRequired("identity"); err != nil {
 		panic(err)
 	}

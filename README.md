@@ -76,13 +76,14 @@ Use "awsconnect ec2 [command] --help" for more information about a command.
 #### Start a session
 ```
 Usage:
-  awsconnect ec2 session [name|ID|IP|DNS| ] [flags]
+  awsconnect ec2 session [flags]
 
 Examples:
-awsconnect ec2 session myserver
+awsconnect ec2 session -t myserver
 
 Flags:
-  -h, --help   help for session
+  -h, --help            help for session
+  -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
       --profile string     AWS profile (optional) (default "default")
@@ -92,15 +93,16 @@ Global Flags:
 #### Port forwarding
 ```
 Usage:
-  awsconnect ec2 fwd [name|ID|IP|DNS| ] [flags]
+  awsconnect ec2 fwd [flags]
 
 Examples:
-awsconnect fwd run myserver -l 8080 -r 8080
+awsconnect fwd run -t myserver -l 8080 -r 8080
 
 Flags:
   -h, --help            help for fwd
   -l, --local string    local port to use (required)
   -r, --remote string   remote port to forward to (required)
+  -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
       --profile string     AWS profile (optional) (default "default")
@@ -111,14 +113,15 @@ Global Flags:
 #### Run commands
 ```
 Usage:
-  awsconnect ec2 run [name|ID|IP|DNS| ] [flags]
+  awsconnect ec2 run [flags]
 
 Examples:
-awsconnect ec2 run -c 'cat /etc/passwd'
+awsconnect ec2 run -t myserver -c 'cat /etc/passwd'
 
 Flags:
-  -c, --cmd string   command to exceute (required)
-  -h, --help         help for run
+  -c, --cmd string      command to exceute (required)
+  -h, --help            help for run
+  -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
       --profile string     AWS profile (optional) (default "default")
@@ -129,16 +132,17 @@ Global Flags:
 #### SSH over Session Manager
 ```
 Usage:
-  awsconnect ec2 ssh [name|ID|IP|DNS| ] [flags]
+  awsconnect ec2 ssh [command] [flags]
 
 Examples:
-awsconnect ssh myserver -i key.pem
+awsconnect ssh -t myserver -i key.pem
 
 Flags:
-  -c, --cmd string        command to exceute (optional)
   -h, --help              help for ssh
-  -i, --identity string    (required) (default "file from which the identity (private key) for public key authentication is read")
+  -i, --identity string   file from which the identity (private key) for public key authentication is read (required)
+  -L, --lforward string   local port forwarding (optional)
   -p, --port string       SSH port to us (optional) (default "22")
+  -t, --target string     name|ID|IP|DNS of the instance (optional)
   -l, --user string       SSH user to us (optional) (default "ec2-user")
 
 Global Flags:
@@ -150,17 +154,17 @@ Global Flags:
 #### SCP over Session Manager
 ```
 Usage:
-  awsconnect ec2 scp [name|ID|IP|DNS| ] [flags]
+  awsconnect ec2 scp [source(s)] [target] [flags]
 
 Examples:
-awsconnect ec2 scp myserver -i key.pem -s file.txt -t /opt/
+awsconnect ec2 scp file.txt /opt/ -t myserver -i key.pem
 
 Flags:
   -h, --help              help for scp
-  -i, --identity string   (required) (default "file from which the identity (private key) for public key authentication is read")
+  -i, --identity string   file from which the identity (private key) for public key authentication is read (required)
   -p, --port string       SSH port to us (optional) (default "22")
-  -s, --source string     source in the local host (required)
-  -t, --target string     target in the remote host (required)
+  -R, --recv              receive files from target (optional)
+  -t, --target string     name|ID|IP|DNS of the instance (optional)
   -l, --user string       SCP user to us (optional) (default "ec2-user")
 
 Global Flags:

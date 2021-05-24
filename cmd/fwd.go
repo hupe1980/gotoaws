@@ -7,6 +7,7 @@ import (
 )
 
 type fwdOptions struct {
+	target           string
 	remotePortNumber string
 	localPortNumber  string
 }
@@ -14,9 +15,9 @@ type fwdOptions struct {
 func newFwdCmd() *cobra.Command {
 	opts := &fwdOptions{}
 	cmd := &cobra.Command{
-		Use:           "fwd [name|ID|IP|DNS| ]",
+		Use:           "fwd",
 		Short:         "Port forwarding",
-		Example:       "awsconnect fwd run myserver -l 8080 -r 8080",
+		Example:       "awsconnect fwd run -t myserver -l 8080 -r 8080",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -25,7 +26,7 @@ func newFwdCmd() *cobra.Command {
 				return err
 			}
 
-			instanceID, err := findInstance(cfg, args)
+			instanceID, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
@@ -52,6 +53,7 @@ func newFwdCmd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "name|ID|IP|DNS of the instance (optional)")
 	cmd.Flags().StringVarP(&opts.remotePortNumber, "remote", "r", "", "remote port to forward to (required)")
 	if err := cmd.MarkFlagRequired("remote"); err != nil {
 		panic(err)

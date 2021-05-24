@@ -7,28 +7,29 @@ import (
 )
 
 type scpOptions struct {
-	port     string
-	user     string
-	identity string
-	source   string
-	target   string
+	target    string
+	port      string
+	user      string
+	identity  string
+	receiving bool
 }
 
 func newSCPCmd() *cobra.Command {
 	opts := &scpOptions{}
 	cmd := &cobra.Command{
-		Use:           "scp [name|ID|IP|DNS| ]",
+		Use:           "scp [source(s)] [target]",
 		Short:         "SCP over Session Manager",
-		Example:       "awsconnect ec2 scp myserver -i key.pem -s file.txt -t /opt/",
+		Example:       "awsconnect ec2 scp file.txt /opt/ -t myserver -i key.pem",
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		Args:          cobra.MinimumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := newConfig(cmd)
 			if err != nil {
 				return err
 			}
 
-			instanceID, err := findInstance(cfg, args)
+			instanceID, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
@@ -45,12 +46,20 @@ func newSCPCmd() *cobra.Command {
 			}
 			defer session.Close()
 
+			pos := len(args) - 1
+
+			mode := internal.SCPModeSending
+			if opts.receiving {
+				mode = internal.SCPModeReceiving
+			}
+
 			if err := session.RunSCP(&internal.RunSCPInput{
-				User:       &opts.user,
-				InstanceID: &instanceID,
-				Identity:   &opts.identity,
-				Source:     &opts.source,
-				Target:     &opts.target,
+				User:       opts.user,
+				InstanceID: instanceID,
+				Identity:   opts.identity,
+				Source:     args[:pos],
+				Target:     args[pos],
+				Mode:       mode,
 			}); err != nil {
 				return err
 			}
@@ -59,17 +68,11 @@ func newSCPCmd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVarP(&opts.receiving, "recv", "R", false, "receive files from target (optional)")
+	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "name|ID|IP|DNS of the instance (optional)")
 	cmd.Flags().StringVarP(&opts.port, "port", "p", "22", "SSH port to us (optional)")
 	cmd.Flags().StringVarP(&opts.user, "user", "l", "ec2-user", "SCP user to us (optional)")
-	cmd.Flags().StringVarP(&opts.source, "source", "s", "", "source in the local host (required)")
-	if err := cmd.MarkFlagRequired("source"); err != nil {
-		panic(err)
-	}
-	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "target in the remote host (required)")
-	if err := cmd.MarkFlagRequired("target"); err != nil {
-		panic(err)
-	}
-	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "file from which the identity (private key) for public key authentication is read", "(required)")
+	cmd.Flags().StringVarP(&opts.identity, "identity", "i", "", "file from which the identity (private key) for public key authentication is read (required)")
 	if err := cmd.MarkFlagRequired("identity"); err != nil {
 		panic(err)
 	}
