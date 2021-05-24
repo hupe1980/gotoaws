@@ -1,6 +1,8 @@
 # awsconnect
 awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the [AWS Systems Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html). It provides secure and auditable resource management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys.
 
+![summry](summary.png)
+
 ## Prerequisites
 - [session-manager-plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) must be installed on your client
 - SSM Agent version 2.3.672.0 or later must be installed on the instances you want to connect to through sessions
