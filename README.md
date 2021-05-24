@@ -185,9 +185,6 @@ Usage:
 Available Commands:
   exec        Exec into container
 
-Examples:
-awsconnect ecs exec --cluster demo-cluster
-
 Flags:
   -h, --help   help for ecs
 
@@ -203,6 +200,9 @@ Use "awsconnect ecs [command] --help" for more information about a command.
 ```
 Usage:
   awsconnect ecs exec [flags]
+
+Examples:
+awsconnect ecs exec --cluster demo-cluster
 
 Flags:
       --cluster string     arn or name of the cluster (optional) (default "default")
