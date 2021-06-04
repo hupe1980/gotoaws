@@ -1,5 +1,9 @@
-# gotoaws
-gotoaws is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the [AWS Systems Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html). It provides secure and auditable resource management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys.
+<p align="center">
+  <img alt="gotoaws Logo" src="./icon.png" height="140" />
+  <h3 align="center">gotoaws</h3>
+</p>
+
+`gotoaws` is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the [AWS Systems Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html). It provides secure and auditable resource management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys.
 
 ![summry](summary.png)
 
@@ -16,6 +20,12 @@ You can install the pre-compiled binary in several different ways
 ```bash
 brew tap hupe1980/gotoaws
 brew install gotoaws
+```
+
+### snapcraft:
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/gotoaws)
+```bash
+sudo snap install --classic gotoaws
 ```
 
 ### scoop:
