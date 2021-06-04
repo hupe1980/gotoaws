@@ -127,6 +127,11 @@ func FindInstanceByIdentifier(cfg *Config, identifier string) ([]Instance, error
 			instances = append(instances, Instance{name, *inst.InstanceId})
 		}
 	}
+
+	if len(instances) == 0 {
+		return nil, fmt.Errorf("no ssm managed instances found")
+	}
+
 	return instances, nil
 }
 

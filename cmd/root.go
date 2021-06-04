@@ -14,7 +14,7 @@ import (
 func Execute(version string) {
 	rootCmd := newRootCmd(version)
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, promptui.IconBad, err)
 		os.Exit(1)
 	}
 }
@@ -79,7 +79,7 @@ func findInstance(cfg *internal.Config, identifier string) (string, error) {
 	if identifier != "" {
 		instances, err := internal.FindInstanceByIdentifier(cfg, identifier)
 		if err != nil {
-			panic(err)
+			return "", err
 		}
 		if len(instances) > 1 {
 			return chooseInstance(instances)
