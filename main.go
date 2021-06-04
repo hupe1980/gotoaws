@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/hupe1980/awsconnect/cmd"
+	"github.com/hupe1980/gotoaws/cmd"
 )
 
 const (

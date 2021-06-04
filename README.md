@@ -1,5 +1,5 @@
-# awsconnect
-awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the [AWS Systems Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html). It provides secure and auditable resource management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys.
+# gotoaws
+gotoaws is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the [AWS Systems Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html). It provides secure and auditable resource management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys.
 
 ![summry](summary.png)
 
@@ -14,49 +14,49 @@ You can install the pre-compiled binary in several different ways
 
 ### homebrew tap:
 ```bash
-brew tap hupe1980/awsconnect
-brew install awsconnect
+brew tap hupe1980/gotoaws
+brew install gotoaws
 ```
 
 ### scoop:
 ```bash
-scoop bucket add awsconnect https://github.com/hupe1980/awsconnect-bucket.git
-scoop install awsconnect
+scoop bucket add gotoaws https://github.com/hupe1980/gotoaws-bucket.git
+scoop install gotoaws
 ```
 
 ### deb/rpm/apk:
 
-Download the .deb, .rpm or .apk from the [releases page](https://github.com/hupe1980/awsconnect/releases) and install them with the appropriate tools.
+Download the .deb, .rpm or .apk from the [releases page](https://github.com/hupe1980/gotoaws/releases) and install them with the appropriate tools.
 
 ### manually:
-Download the pre-compiled binaries from the [releases page](https://github.com/hupe1980/awsconnect/releases) and copy to the desired location.
+Download the pre-compiled binaries from the [releases page](https://github.com/hupe1980/gotoaws/releases) and copy to the desired location.
 
 ## How to use
 ```
 Usage:
-  awsconnect [command]
+  gotoaws [command]
 
 Available Commands:
-  completion  Prints shell autocompletion scripts for awsconnect
+  completion  Prints shell autocompletion scripts for gotoaws
   ec2         Connect to ec2
   ecs         Connect to ecs
   help        Help about any command
 
 Flags:
-  -h, --help               help for awsconnect
+  -h, --help               help for gotoaws
       --profile string     AWS profile (optional) (default "default")
       --region string      AWS region (optional)
       --timeout duration   timeout for network requests (default 15s)
-  -v, --version            version for awsconnect
+  -v, --version            version for gotoaws
 
-Use "awsconnect [command] --help" for more information about a command.
+Use "gotoaws [command] --help" for more information about a command.
 ```
 
 ## EC2
 You can connect to your instances by name, ID, DNS, IP or select an instance from a list.
 ```
 Usage:
-  awsconnect ec2 [command]
+  gotoaws ec2 [command]
 
 Available Commands:
   fwd         Port forwarding
@@ -73,15 +73,15 @@ Global Flags:
       --region string      AWS region (optional)
       --timeout duration   timeout for network requests (default 15s)
 
-Use "awsconnect ec2 [command] --help" for more information about a command.
+Use "gotoaws ec2 [command] --help" for more information about a command.
 ```
 #### Start a session
 ```
 Usage:
-  awsconnect ec2 session [flags]
+  gotoaws ec2 session [flags]
 
 Examples:
-awsconnect ec2 session -t myserver
+gotoaws ec2 session -t myserver
 
 Flags:
   -h, --help            help for session
@@ -95,10 +95,10 @@ Global Flags:
 #### Port forwarding
 ```
 Usage:
-  awsconnect ec2 fwd [flags]
+  gotoaws ec2 fwd [flags]
 
 Examples:
-awsconnect fwd run -t myserver -l 8080 -r 8080
+gotoaws fwd run -t myserver -l 8080 -r 8080
 
 Flags:
   -h, --help            help for fwd
@@ -115,10 +115,10 @@ Global Flags:
 #### Run commands
 ```
 Usage:
-  awsconnect ec2 run [flags]
+  gotoaws ec2 run [flags]
 
 Examples:
-awsconnect ec2 run -t myserver -c 'cat /etc/passwd'
+gotoaws ec2 run -t myserver -c 'cat /etc/passwd'
 
 Flags:
   -c, --cmd string      command to exceute (required)
@@ -134,10 +134,10 @@ Global Flags:
 #### SSH over Session Manager
 ```
 Usage:
-  awsconnect ec2 ssh [command] [flags]
+  gotoaws ec2 ssh [command] [flags]
 
 Examples:
-awsconnect ssh -t myserver -i key.pem
+gotoaws ssh -t myserver -i key.pem
 
 Flags:
   -h, --help              help for ssh
@@ -156,10 +156,10 @@ Global Flags:
 #### SCP over Session Manager
 ```
 Usage:
-  awsconnect ec2 scp [source(s)] [target] [flags]
+  gotoaws ec2 scp [source(s)] [target] [flags]
 
 Examples:
-awsconnect ec2 scp file.txt /opt/ -t myserver -i key.pem
+gotoaws ec2 scp file.txt /opt/ -t myserver -i key.pem
 
 Flags:
   -h, --help              help for scp
@@ -180,7 +180,7 @@ You can directly interact with containers without needing to first interact with
  
 ```
 Usage:
-  awsconnect ecs [command]
+  gotoaws ecs [command]
 
 Available Commands:
   exec        Exec into container
@@ -193,16 +193,16 @@ Global Flags:
       --region string      AWS region (optional)
       --timeout duration   timeout for network requests (default 15s)
 
-Use "awsconnect ecs [command] --help" for more information about a command.
+Use "gotoaws ecs [command] --help" for more information about a command.
 ```
 
 ### Exec into container
 ```
 Usage:
-  awsconnect ecs exec [flags]
+  gotoaws ecs exec [flags]
 
 Examples:
-awsconnect ecs exec --cluster demo-cluster
+gotoaws ecs exec --cluster demo-cluster
 
 Flags:
       --cluster string     arn or name of the cluster (optional) (default "default")

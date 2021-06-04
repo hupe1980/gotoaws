@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
-	"github.com/hupe1980/awsconnect/internal"
+	"github.com/hupe1980/gotoaws/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +20,7 @@ func newExecCmd() *cobra.Command {
 		Short:         "Exec into container",
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		Example:       "awsconnect ecs exec --cluster demo-cluster",
+		Example:       "gotoaws ecs exec --cluster demo-cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := newConfig(cmd)
 			if err != nil {

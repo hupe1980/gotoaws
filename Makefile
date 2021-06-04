@@ -15,7 +15,7 @@ test:
 	go test -v -race -count=1  ./...
 
 .PHONY: build
-## build: Builds a beta version of awsconnect
+## build: Builds a beta version of gotoaws
 build:
 	go build -o dist/
 
@@ -24,7 +24,7 @@ build:
 ci: build test
 
 .PHONY: run
-## run: Runs awsconnect
+## run: Runs gotoaws
 run:
 	go run main.go ec2 run -c "cat /etc/passwd"
 

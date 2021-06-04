@@ -1,4 +1,4 @@
-module github.com/hupe1980/awsconnect
+module github.com/hupe1980/gotoaws
 
 go 1.16
 

@@ -21,5 +21,5 @@ func TestRootCmdVersion(t *testing.T) {
 	cmd.SetOut(&b)
 	cmd.SetArgs([]string{"-v"})
 	require.NoError(t, cmd.Execute())
-	require.Equal(t, "awsconnect version 1.2.3\n", b.String())
+	require.Equal(t, "gotoaws version 1.2.3\n", b.String())
 }

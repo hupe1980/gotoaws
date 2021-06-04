@@ -45,36 +45,36 @@ changelog:
 brews:
   - tap:
       owner: hupe1980
-      name: homebrew-awsconnect
-    homepage:  https://github.com/hupe1980/awsconnect
-    description: awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
+      name: homebrew-gotoaws
+    homepage:  https://github.com/hupe1980/gotoaws
+    description: gotoaws is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
     license: MIT
     test: |
-      system "#{bin}/awsconnect -v"
+      system "#{bin}/gotoaws -v"
     install: |-
-      bin.install "awsconnect"
-      bash_completion.install "completions/awsconnect.bash" => "awsconnect"
-      zsh_completion.install "completions/awsconnect.zsh" => "_awsconnect"
-      fish_completion.install "completions/awsconnect.fish"
+      bin.install "gotoaws"
+      bash_completion.install "completions/gotoaws.bash" => "gotoaws"
+      zsh_completion.install "completions/gotoaws.zsh" => "_gotoaws"
+      fish_completion.install "completions/gotoaws.fish"
 scoop:
   bucket:
     owner: hupe1980
-    name: awsconnect-bucket
-  homepage:  https://github.com/hupe1980/awsconnect
-  description: awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
+    name: gotoaws-bucket
+  homepage:  https://github.com/hupe1980/gotoaws
+  description: gotoaws is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
   license: MIT
 nfpms:
   - file_name_template: '{{ .ProjectName }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
-    homepage:  https://github.com/hupe1980/awsconnect
-    description: awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
+    homepage:  https://github.com/hupe1980/gotoaws
+    description: gotoaws is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container) using the AWS Systems Manager Session Manager
     license: MIT
     contents:
-      - src: ./completions/awsconnect.bash
-        dst: /etc/bash_completion.d/awsconnect
-      - src: ./completions/awsconnect.fish
-        dst: /usr/share/fish/completions/awsconnect.fish
-      - src: ./completions/awsconnect.zsh
-        dst: /usr/local/share/zsh/site-functions/_awsconnect
+      - src: ./completions/gotoaws.bash
+        dst: /etc/bash_completion.d/gotoaws
+      - src: ./completions/gotoaws.fish
+        dst: /usr/share/fish/completions/gotoaws.fish
+      - src: ./completions/gotoaws.zsh
+        dst: /usr/local/share/zsh/site-functions/_gotoaws
     formats:
     - apk
     - deb

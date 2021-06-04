@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/hupe1980/awsconnect/internal"
+	"github.com/hupe1980/gotoaws/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ func newRunCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "run",
 		Short:         "Run commands",
-		Example:       "awsconnect ec2 run -t myserver -c 'cat /etc/passwd'",
+		Example:       "gotoaws ec2 run -t myserver -c 'cat /etc/passwd'",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

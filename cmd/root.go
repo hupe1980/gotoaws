@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hupe1980/awsconnect/internal"
+	"github.com/hupe1980/gotoaws/internal"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
@@ -28,10 +28,10 @@ type rootOptions struct {
 func newRootCmd(version string) *cobra.Command {
 	opts := &rootOptions{}
 	cmd := &cobra.Command{
-		Use:     "awsconnect",
+		Use:     "gotoaws",
 		Version: version,
-		Short:   "awsconnect is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container)",
-		Long: `awsconnect is an interactive CLI tool 
+		Short:   "gotoaws is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container)",
+		Long: `gotoaws is an interactive CLI tool 
 that you can use to connect to your AWS resources (EC2, ECS container) 
 using the AWS Systems Manager Session Manager. 
 It provides secure and auditable resource management without the need to open inbound ports, 

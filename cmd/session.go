@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/hupe1980/awsconnect/internal"
+	"github.com/hupe1980/gotoaws/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +15,7 @@ func newSessionCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "session",
 		Short:         "Start a session",
-		Example:       "awsconnect ec2 session -t myserver",
+		Example:       "gotoaws ec2 session -t myserver",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

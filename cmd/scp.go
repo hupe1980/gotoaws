@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/hupe1980/awsconnect/internal"
+	"github.com/hupe1980/gotoaws/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +19,7 @@ func newSCPCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "scp [source(s)] [target]",
 		Short:         "SCP over Session Manager",
-		Example:       "awsconnect ec2 scp file.txt /opt/ -t myserver -i key.pem",
+		Example:       "gotoaws ec2 scp file.txt /opt/ -t myserver -i key.pem",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		Args:          cobra.MinimumNArgs(2),

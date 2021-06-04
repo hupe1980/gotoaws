@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/hupe1980/awsconnect/internal"
+	"github.com/hupe1980/gotoaws/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ func newFwdCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "fwd",
 		Short:         "Port forwarding",
-		Example:       "awsconnect fwd run -t myserver -l 8080 -r 8080",
+		Example:       "gotoaws fwd run -t myserver -l 8080 -r 8080",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

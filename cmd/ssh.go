@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/hupe1980/awsconnect/internal"
+	"github.com/hupe1980/gotoaws/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ func newSSHCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "ssh [command]",
 		Short:         "SSH over Session Manager",
-		Example:       "awsconnect ssh -t myserver -i key.pem",
+		Example:       "gotoaws ssh -t myserver -i key.pem",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
