@@ -30,7 +30,7 @@ func newRootCmd(version string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "gotoaws",
 		Version: version,
-		Short:   "gotoaws is an interactive CLI tool that you can use to connect to your AWS resources (EC2, ECS container)",
+		Short:   "Connect to your EC2 instance or ECS container without the need to open inbound ports, maintain bastion hosts, or manage SSH keys",
 		Long: `gotoaws is an interactive CLI tool 
 that you can use to connect to your AWS resources (EC2, ECS container) 
 using the AWS Systems Manager Session Manager. 
