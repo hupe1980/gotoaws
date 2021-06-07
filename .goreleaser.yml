@@ -87,6 +87,6 @@ snapcrafts:
       container) using the AWS Systems Manager Session Manager. It provides secure and auditable 
       resource management without the need to open inbound ports, maintain bastion hosts, or manage 
       SSH keys.
-    grade: beta
+    grade: stable
     confinement: strict
     publish: true
