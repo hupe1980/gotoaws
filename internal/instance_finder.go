@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -18,11 +19,38 @@ type Instance struct {
 	ID   string
 }
 
-func FindPossibleInstances(cfg *Config) ([]Instance, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
+type EC2Client interface {
+	DescribeInstances(ctx context.Context, params *ec2.DescribeInstancesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInstancesOutput, error)
+}
+
+type SSMClient interface {
+	DescribeInstanceInformation(ctx context.Context, params *ssm.DescribeInstanceInformationInput, optFns ...func(*ssm.Options)) (*ssm.DescribeInstanceInformationOutput, error)
+}
+
+type InstanceFinder interface {
+	Find() ([]Instance, error)
+	FindByIdentifier(identifier string) ([]Instance, error)
+}
+
+type instanceFinder struct {
+	timeout time.Duration
+	ec2     EC2Client
+	ssm     SSMClient
+}
+
+func NewInstanceFinder(cfg *Config) InstanceFinder {
+	return &instanceFinder{
+		timeout: cfg.timeout,
+		ec2:     ec2.NewFromConfig(cfg.awsCfg),
+		ssm:     ssm.NewFromConfig(cfg.awsCfg),
+	}
+}
+
+func (f *instanceFinder) Find() ([]Instance, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
 	defer cancel()
 
-	ec2Instances, managedInstances, err := findSSMManagedInstances(cfg)
+	ec2Instances, managedInstances, err := f.findSSMManagedInstances()
 	if err != nil {
 		return nil, err
 	}
@@ -43,8 +71,7 @@ func FindPossibleInstances(cfg *Config) ([]Instance, error) {
 		Filters: []types.Filter{instanceRunningFilter, instanceIDFilter},
 	}
 
-	client := ec2.NewFromConfig(cfg.awsCfg)
-	output, err := client.DescribeInstances(ctx, input)
+	output, err := f.ec2.DescribeInstances(ctx, input)
 	if err != nil {
 		return nil, err
 	}
@@ -68,48 +95,15 @@ func FindPossibleInstances(cfg *Config) ([]Instance, error) {
 	return instances, nil
 }
 
-func findSSMManagedInstances(cfg *Config) ([]ssmTypes.InstanceInformation, []ssmTypes.InstanceInformation, error) {
-	client := ssm.NewFromConfig(cfg.awsCfg)
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
-	defer cancel()
-
-	onlineFilter := ssmTypes.InstanceInformationStringFilter{
-		Key:    aws.String("PingStatus"),
-		Values: []string{"Online"},
-	}
-	input := &ssm.DescribeInstanceInformationInput{
-		Filters: []ssmTypes.InstanceInformationStringFilter{onlineFilter},
-	}
-	out, err := client.DescribeInstanceInformation(ctx, input)
-	if err != nil {
-		return nil, nil, err
-	}
-	if len(out.InstanceInformationList) == 0 {
-		return nil, nil, fmt.Errorf("no ssm managed instances found")
-	}
-
-	var ec2Instances []ssmTypes.InstanceInformation
-	var managedInstances []ssmTypes.InstanceInformation
-	for _, i := range out.InstanceInformationList {
-		if i.ResourceType != ssmTypes.ResourceTypeEc2Instance {
-			managedInstances = append(managedInstances, i)
-		} else {
-			ec2Instances = append(ec2Instances, i)
-		}
-	}
-	return ec2Instances, managedInstances, nil
-}
-
-func FindInstanceByIdentifier(cfg *Config, identifier string) ([]Instance, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
+func (f *instanceFinder) FindByIdentifier(identifier string) ([]Instance, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
 	defer cancel()
 
 	input := &ec2.DescribeInstancesInput{
 		Filters: []types.Filter{parseIdentifier(identifier)},
 	}
 
-	client := ec2.NewFromConfig(cfg.awsCfg)
-	output, err := client.DescribeInstances(ctx, input)
+	output, err := f.ec2.DescribeInstances(ctx, input)
 	if err != nil {
 		return nil, err
 	}
@@ -133,6 +127,37 @@ func FindInstanceByIdentifier(cfg *Config, identifier string) ([]Instance, error
 	}
 
 	return instances, nil
+}
+
+func (f *instanceFinder) findSSMManagedInstances() ([]ssmTypes.InstanceInformation, []ssmTypes.InstanceInformation, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
+	defer cancel()
+
+	onlineFilter := ssmTypes.InstanceInformationStringFilter{
+		Key:    aws.String("PingStatus"),
+		Values: []string{"Online"},
+	}
+	input := &ssm.DescribeInstanceInformationInput{
+		Filters: []ssmTypes.InstanceInformationStringFilter{onlineFilter},
+	}
+	out, err := f.ssm.DescribeInstanceInformation(ctx, input)
+	if err != nil {
+		return nil, nil, err
+	}
+	if len(out.InstanceInformationList) == 0 {
+		return nil, nil, fmt.Errorf("no ssm managed instances found")
+	}
+
+	var ec2Instances []ssmTypes.InstanceInformation
+	var managedInstances []ssmTypes.InstanceInformation
+	for _, i := range out.InstanceInformationList {
+		if i.ResourceType != ssmTypes.ResourceTypeEc2Instance {
+			managedInstances = append(managedInstances, i)
+		} else {
+			ec2Instances = append(ec2Instances, i)
+		}
+	}
+	return ec2Instances, managedInstances, nil
 }
 
 func parseIdentifier(identifier string) types.Filter {

@@ -76,8 +76,9 @@ func newConfig(cmd *cobra.Command) (*internal.Config, error) {
 }
 
 func findInstance(cfg *internal.Config, identifier string) (string, error) {
+	finder := internal.NewInstanceFinder(cfg)
 	if identifier != "" {
-		instances, err := internal.FindInstanceByIdentifier(cfg, identifier)
+		instances, err := finder.FindByIdentifier(identifier)
 		if err != nil {
 			return "", err
 		}
@@ -86,7 +87,7 @@ func findInstance(cfg *internal.Config, identifier string) (string, error) {
 		}
 		return instances[0].ID, nil
 	}
-	instances, err := internal.FindPossibleInstances(cfg)
+	instances, err := finder.Find()
 	if err != nil {
 		return "", err
 	}
@@ -123,8 +124,9 @@ func chooseInstance(instances []internal.Instance) (string, error) {
 }
 
 func findContainer(cfg *internal.Config, cluster string, task string, cname string) (string, string, error) {
+	finder := internal.NewContainerFinder(cfg)
 	if task != "" {
-		containers, err := internal.FindPossibleContainerByIdentifier(cfg, cluster, task, cname)
+		containers, err := finder.FindByIdentifier(cluster, task, cname)
 		if err != nil {
 			return "", "", err
 		}
@@ -133,7 +135,7 @@ func findContainer(cfg *internal.Config, cluster string, task string, cname stri
 		}
 		return containers[0].Task, containers[0].Name, nil
 	}
-	containers, err := internal.FindPossibleContainers(cfg, cluster)
+	containers, err := finder.Find(cluster)
 	if err != nil {
 		return "", "", err
 	}

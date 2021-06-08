@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
@@ -14,13 +15,33 @@ type Container struct {
 	Name string
 }
 
-func FindPossibleContainers(cfg *Config, cluster string) ([]Container, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
+type ECSClient interface {
+	DescribeTasks(ctx context.Context, params *ecs.DescribeTasksInput, optFns ...func(*ecs.Options)) (*ecs.DescribeTasksOutput, error)
+	ListTasks(ctx context.Context, params *ecs.ListTasksInput, optFns ...func(*ecs.Options)) (*ecs.ListTasksOutput, error)
+}
+
+type ContainerFinder interface {
+	Find(cluster string) ([]Container, error)
+	FindByIdentifier(cluster string, task string, container string) ([]Container, error)
+}
+
+type containerFinder struct {
+	timeout time.Duration
+	ecs     ECSClient
+}
+
+func NewContainerFinder(cfg *Config) ContainerFinder {
+	return &containerFinder{
+		timeout: cfg.timeout,
+		ecs:     ecs.NewFromConfig(cfg.awsCfg),
+	}
+}
+
+func (f *containerFinder) Find(cluster string) ([]Container, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
 	defer cancel()
 
-	client := ecs.NewFromConfig(cfg.awsCfg)
-
-	output, err := client.ListTasks(ctx, &ecs.ListTasksInput{
+	output, err := f.ecs.ListTasks(ctx, &ecs.ListTasksInput{
 		Cluster: &cluster,
 	})
 	if err != nil {
@@ -30,7 +51,7 @@ func FindPossibleContainers(cfg *Config, cluster string) ([]Container, error) {
 		return nil, fmt.Errorf("no ssm managed containers found")
 	}
 
-	tasks, err := client.DescribeTasks(ctx, &ecs.DescribeTasksInput{
+	tasks, err := f.ecs.DescribeTasks(ctx, &ecs.DescribeTasksInput{
 		Cluster: &cluster,
 		Tasks:   output.TaskArns,
 	})
@@ -55,12 +76,11 @@ func FindPossibleContainers(cfg *Config, cluster string) ([]Container, error) {
 	return containers, nil
 }
 
-func FindPossibleContainerByIdentifier(cfg *Config, cluster string, task string, container string) ([]Container, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
+func (f *containerFinder) FindByIdentifier(cluster string, task string, container string) ([]Container, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
 	defer cancel()
 
-	client := ecs.NewFromConfig(cfg.awsCfg)
-	tasks, err := client.DescribeTasks(ctx, &ecs.DescribeTasksInput{
+	tasks, err := f.ecs.DescribeTasks(ctx, &ecs.DescribeTasksInput{
 		Cluster: &cluster,
 		Tasks:   []string{task},
 	})
