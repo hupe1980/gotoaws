@@ -87,6 +87,7 @@ func (f *containerFinder) FindByIdentifier(cluster string, task string, containe
 	if err != nil {
 		return nil, err
 	}
+
 	var containers []Container
 	for _, t := range tasks.Tasks {
 		if t.EnableExecuteCommand {
