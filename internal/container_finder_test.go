@@ -64,10 +64,12 @@ func TestContainerFinder(t *testing.T) {
 					DescribeTasksError: nil,
 				},
 			}
+			expected := []Container{
+				{Name: "container", Task: "1234567890123456789"},
+			}
 			instances, err := finder.FindByIdentifier("cluster", "task", "")
 			assert.Nil(t, err)
-			assert.Equal(t, "container", instances[0].Name)
-			assert.Equal(t, "1234567890123456789", instances[0].Task)
+			assert.Equal(t, expected, instances)
 		})
 	})
 
@@ -96,10 +98,12 @@ func TestContainerFinder(t *testing.T) {
 					DescribeTasksError: nil,
 				},
 			}
+			expected := []Container{
+				{Name: "container1", Task: "1234567890123456789"},
+			}
 			instances, err := finder.FindByIdentifier("cluster", "task", "container1")
 			assert.Nil(t, err)
-			assert.Equal(t, "container1", instances[0].Name)
-			assert.Equal(t, "1234567890123456789", instances[0].Task)
+			assert.Equal(t, expected, instances)
 		})
 	})
 }

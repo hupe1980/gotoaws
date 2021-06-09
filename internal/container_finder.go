@@ -92,10 +92,12 @@ func (f *containerFinder) FindByIdentifier(cluster string, task string, containe
 	for _, t := range tasks.Tasks {
 		if t.EnableExecuteCommand {
 			for _, c := range t.Containers {
-				containers = append(containers, Container{
-					Task: taskID(*c.TaskArn),
-					Name: *c.Name,
-				})
+				if container == "" || container == *c.Name {
+					containers = append(containers, Container{
+						Task: taskID(*c.TaskArn),
+						Name: *c.Name,
+					})
+				}
 			}
 		}
 	}
