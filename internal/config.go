@@ -30,6 +30,7 @@ func NewConfig(profile string, region string, timeout time.Duration) (*Config, e
 
 	awsCfg, err := config.LoadDefaultConfig(
 		context.TODO(),
+		config.WithRegion(region),
 		config.WithSharedConfigProfile(profile),
 		config.WithAssumeRoleCredentialOptions(func(aro *stscreds.AssumeRoleOptions) {
 			aro.TokenProvider = stscreds.StdinTokenProvider
@@ -37,10 +38,6 @@ func NewConfig(profile string, region string, timeout time.Duration) (*Config, e
 	)
 	if err != nil {
 		return nil, err
-	}
-
-	if region != "" {
-		awsCfg.Region = region
 	}
 
 	pluginPath, err := exec.LookPath("session-manager-plugin")
