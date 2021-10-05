@@ -9,6 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 )
 
 type Config struct {
@@ -30,6 +31,9 @@ func NewConfig(profile string, region string, timeout time.Duration) (*Config, e
 	awsCfg, err := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithSharedConfigProfile(profile),
+		config.WithAssumeRoleCredentialOptions(func(aro *stscreds.AssumeRoleOptions) {
+			aro.TokenProvider = stscreds.StdinTokenProvider
+		}),
 	)
 	if err != nil {
 		return nil, err
