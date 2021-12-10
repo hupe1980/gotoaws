@@ -28,6 +28,12 @@ func NewConfig(profile string, region string, timeout time.Duration) (*Config, e
 		}
 	}
 
+	if region == "" {
+		if os.Getenv("AWS_DEFAULT_REGION") != "" {
+			region = os.Getenv("AWS_DEFAULT_REGION")
+		}
+	}
+
 	awsCfg, err := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithRegion(region),
