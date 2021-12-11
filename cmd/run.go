@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/hupe1980/gotoaws/internal"
 	"github.com/spf13/cobra"
@@ -37,7 +38,7 @@ func newRunCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			fmt.Println(res)
+			fmt.Fprintln(os.Stdout, res)
 
 			return nil
 		},

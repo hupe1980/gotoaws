@@ -23,6 +23,7 @@ type rootOptions struct {
 	profile string
 	region  string
 	timeout time.Duration
+	silent  bool
 }
 
 func newRootCmd(version string) *cobra.Command {
@@ -41,6 +42,7 @@ maintain bastion hosts, or manage SSH keys.`,
 	cmd.PersistentFlags().StringVar(&opts.profile, "profile", "default", "AWS profile (optional)")
 	cmd.PersistentFlags().StringVar(&opts.region, "region", "", "AWS region (optional)")
 	cmd.PersistentFlags().DurationVar(&opts.timeout, "timeout", time.Second*15, "timeout for network requests")
+	cmd.PersistentFlags().BoolVar(&opts.silent, "silent", false, "run gotoaws without printing logs")
 	cmd.AddCommand(
 		newEC2Cmd(),
 		newECSCmd(),
@@ -70,7 +72,14 @@ func newConfig(cmd *cobra.Command) (*internal.Config, error) {
 		return nil, err
 	}
 
-	fmt.Printf("%s Profile: %s (%s)\n", promptui.IconGood, cfg.Profile, cfg.Region)
+	silent, err := cmd.Root().PersistentFlags().GetBool("silent")
+	if err != nil {
+		return nil, err
+	}
+
+	if !silent {
+		fmt.Fprintf(os.Stdout, "%s Profile: %s (%s)\n", promptui.IconGood, cfg.Profile, cfg.Region)
+	}
 
 	return cfg, nil
 }
