@@ -39,7 +39,7 @@ It provides secure and auditable resource management without the need to open in
 maintain bastion hosts, or manage SSH keys.`,
 		SilenceErrors: true,
 	}
-	cmd.PersistentFlags().StringVar(&opts.profile, "profile", "default", "AWS profile (optional)")
+	cmd.PersistentFlags().StringVar(&opts.profile, "profile", "", "AWS profile (optional)")
 	cmd.PersistentFlags().StringVar(&opts.region, "region", "", "AWS region (optional)")
 	cmd.PersistentFlags().DurationVar(&opts.timeout, "timeout", time.Second*15, "timeout for network requests")
 	cmd.PersistentFlags().BoolVar(&opts.silent, "silent", false, "run gotoaws without printing logs")
@@ -78,7 +78,7 @@ func newConfig(cmd *cobra.Command) (*internal.Config, error) {
 	}
 
 	if !silent {
-		fmt.Fprintf(os.Stdout, "%s Profile: %s (%s)\n", promptui.IconGood, cfg.Profile, cfg.Region)
+		fmt.Fprintf(os.Stdout, "%s Account: %s (%s)\n", promptui.IconGood, cfg.Account, cfg.Region)
 	}
 
 	return cfg, nil

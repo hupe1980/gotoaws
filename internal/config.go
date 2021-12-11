@@ -3,16 +3,17 @@ package internal
 import (
 	"context"
 	"fmt"
-	"os"
 	"os/exec"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 )
 
 type Config struct {
+	Account string
 	Profile string
 	Region  string
 	plugin  string
@@ -21,19 +22,6 @@ type Config struct {
 }
 
 func NewConfig(profile string, region string, timeout time.Duration) (*Config, error) {
-	if profile == "" {
-		profile = "default"
-		if os.Getenv("AWS_PROFILE") != "" {
-			profile = os.Getenv("AWS_PROFILE")
-		}
-	}
-
-	if region == "" {
-		if os.Getenv("AWS_DEFAULT_REGION") != "" {
-			region = os.Getenv("AWS_DEFAULT_REGION")
-		}
-	}
-
 	awsCfg, err := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithRegion(region),
@@ -54,7 +42,15 @@ https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-wor
 		`)
 	}
 
+	client := sts.NewFromConfig(awsCfg)
+
+	output, err := client.GetCallerIdentity(context.TODO(), &sts.GetCallerIdentityInput{})
+	if err != nil {
+		return nil, err
+	}
+
 	return &Config{
+		Account: *output.Account,
 		Profile: profile,
 		Region:  awsCfg.Region,
 		plugin:  pluginPath,
