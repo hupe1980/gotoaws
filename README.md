@@ -54,8 +54,9 @@ Available Commands:
 
 Flags:
   -h, --help               help for gotoaws
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
   -v, --version            version for gotoaws
 
@@ -79,8 +80,9 @@ Flags:
   -h, --help   help for ec2
 
 Global Flags:
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 
 Use "gotoaws ec2 [command] --help" for more information about a command.
@@ -98,8 +100,9 @@ Flags:
   -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
 #### Port forwarding
@@ -117,8 +120,9 @@ Flags:
   -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
 
@@ -136,8 +140,9 @@ Flags:
   -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
 
@@ -158,8 +163,9 @@ Flags:
   -l, --user string       SSH user to us (optional) (default "ec2-user")
 
 Global Flags:
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
 
@@ -180,8 +186,9 @@ Flags:
   -l, --user string       SCP user to us (optional) (default "ec2-user")
 
 Global Flags:
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
 
@@ -199,8 +206,9 @@ Flags:
   -h, --help   help for ecs
 
 Global Flags:
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 
 Use "gotoaws ecs [command] --help" for more information about a command.
@@ -222,8 +230,9 @@ Flags:
       --task string        arn or id of the task (optional)
 
 Global Flags:
-      --profile string     AWS profile (optional) (default "default")
+      --profile string     AWS profile (optional)
       --region string      AWS region (optional)
+      --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
 ## License
