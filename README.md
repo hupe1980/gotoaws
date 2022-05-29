@@ -112,9 +112,11 @@ Usage:
 
 Examples:
 gotoaws fwd run -t myserver -l 8080 -r 8080
+gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com
 
 Flags:
   -h, --help            help for fwd
+  -H, --host string     remote host to forward to (optional)
   -l, --local string    local port to use (required)
   -r, --remote string   remote port to forward to (required)
   -t, --target string   name|ID|IP|DNS of the instance (optional)

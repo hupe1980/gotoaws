@@ -9,15 +9,17 @@ import (
 type fwdOptions struct {
 	target           string
 	remotePortNumber string
+	remoteHost       string
 	localPortNumber  string
 }
 
 func newFwdCmd() *cobra.Command {
 	opts := &fwdOptions{}
 	cmd := &cobra.Command{
-		Use:           "fwd",
-		Short:         "Port forwarding",
-		Example:       "gotoaws fwd run -t myserver -l 8080 -r 8080",
+		Use:   "fwd",
+		Short: "Port forwarding",
+		Example: `gotoaws fwd run -t myserver -l 8080 -r 8080
+gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -40,6 +42,20 @@ func newFwdCmd() *cobra.Command {
 				},
 				Target: &instanceID,
 			}
+
+			if opts.remoteHost != "" {
+				docName = "AWS-StartPortForwardingSessionToRemoteHost"
+				input = &ssm.StartSessionInput{
+					DocumentName: &docName,
+					Parameters: map[string][]string{
+						"portNumber":      {opts.remotePortNumber},
+						"localPortNumber": {opts.localPortNumber},
+						"host":            {opts.remoteHost},
+					},
+					Target: &instanceID,
+				}
+			}
+
 			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
 				return err
@@ -59,6 +75,8 @@ func newFwdCmd() *cobra.Command {
 	if err := cmd.MarkFlagRequired("remote"); err != nil {
 		panic(err)
 	}
+
+	cmd.Flags().StringVarP(&opts.remoteHost, "host", "H", "", "remote host to forward to (optional)")
 
 	cmd.Flags().StringVarP(&opts.localPortNumber, "local", "l", "", "local port to use (required)")
 
