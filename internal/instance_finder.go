@@ -15,8 +15,9 @@ import (
 )
 
 type Instance struct {
-	Name string
-	ID   string
+	Name     string
+	ID       string
+	Platform string
 }
 
 type InstanceFinder interface {
@@ -86,13 +87,13 @@ func (f *instanceFinder) Find() ([]Instance, error) {
 					}
 				}
 
-				instances = append(instances, Instance{name, *inst.InstanceId})
+				instances = append(instances, Instance{Name: name, ID: *inst.InstanceId, Platform: platform(inst)})
 			}
 		}
 	}
 
 	for _, mi := range managedInstances {
-		instances = append(instances, Instance{*mi.Name, *mi.InstanceId})
+		instances = append(instances, Instance{Name: *mi.Name, ID: *mi.InstanceId, Platform: string(mi.PlatformType)})
 	}
 
 	return instances, nil
@@ -128,7 +129,7 @@ func (f *instanceFinder) FindByIdentifier(identifier string) ([]Instance, error)
 					}
 				}
 
-				instances = append(instances, Instance{name, *inst.InstanceId})
+				instances = append(instances, Instance{Name: name, ID: *inst.InstanceId, Platform: platform(inst)})
 			}
 		}
 	}
@@ -179,6 +180,14 @@ func (f *instanceFinder) findSSMManagedInstances() ([]ssmTypes.InstanceInformati
 	}
 
 	return ec2Instances, managedInstances, nil
+}
+
+func platform(inst types.Instance) string {
+	if inst.Platform != "" {
+		return string(inst.Platform)
+	}
+
+	return "Linux" // TODO MacOS
 }
 
 func parseIdentifier(identifier string) types.Filter {

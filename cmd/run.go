@@ -26,11 +26,11 @@ func newRunCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			instanceID, err := findInstance(cfg, opts.target)
+			inst, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
-			command, err := internal.NewLinuxCommand(cfg, instanceID, opts.cmd)
+			command, err := internal.NewCommand(cfg, inst, opts.cmd)
 			if err != nil {
 				return err
 			}

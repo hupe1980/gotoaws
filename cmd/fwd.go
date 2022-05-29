@@ -28,7 +28,7 @@ gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com`,
 				return err
 			}
 
-			instanceID, err := findInstance(cfg, opts.target)
+			inst, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
@@ -40,7 +40,7 @@ gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com`,
 					"portNumber":      {opts.remotePortNumber},
 					"localPortNumber": {opts.localPortNumber},
 				},
-				Target: &instanceID,
+				Target: &inst.ID,
 			}
 
 			if opts.remoteHost != "" {
@@ -52,7 +52,7 @@ gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com`,
 						"localPortNumber": {opts.localPortNumber},
 						"host":            {opts.remoteHost},
 					},
-					Target: &instanceID,
+					Target: &inst.ID,
 				}
 			}
 

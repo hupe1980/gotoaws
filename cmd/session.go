@@ -24,12 +24,12 @@ func newSessionCmd() *cobra.Command {
 				return err
 			}
 
-			instanceID, err := findInstance(cfg, opts.target)
+			inst, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
 
-			input := &ssm.StartSessionInput{Target: &instanceID}
+			input := &ssm.StartSessionInput{Target: &inst.ID}
 			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
 				return err

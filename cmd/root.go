@@ -85,30 +85,30 @@ func newConfig(cmd *cobra.Command) (*internal.Config, error) {
 	return cfg, nil
 }
 
-func findInstance(cfg *internal.Config, identifier string) (string, error) {
+func findInstance(cfg *internal.Config, identifier string) (*internal.Instance, error) {
 	finder := internal.NewInstanceFinder(cfg)
 	if identifier != "" {
 		instances, err := finder.FindByIdentifier(identifier)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		if len(instances) > 1 {
 			return chooseInstance(instances)
 		}
 
-		return instances[0].ID, nil
+		return &instances[0], nil
 	}
 
 	instances, err := finder.Find()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	return chooseInstance(instances)
 }
 
-func chooseInstance(instances []internal.Instance) (string, error) {
+func chooseInstance(instances []internal.Instance) (*internal.Instance, error) {
 	templates := &promptui.SelectTemplates{
 		Active:   fmt.Sprintf(`%s {{ .Name | cyan | bold }} ({{ .ID }})`, promptui.IconSelect),
 		Inactive: `   {{ .Name | cyan }} ({{ .ID }})`,
@@ -133,10 +133,10 @@ func chooseInstance(instances []internal.Instance) (string, error) {
 
 	i, _, err := prompt.Run()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return instances[i].ID, nil
+	return &instances[i], nil
 }
 
 func findContainer(cfg *internal.Config, cluster string, task string, cname string) (string, string, error) {

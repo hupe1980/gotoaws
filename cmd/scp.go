@@ -29,7 +29,7 @@ func newSCPCmd() *cobra.Command {
 				return err
 			}
 
-			instanceID, err := findInstance(cfg, opts.target)
+			inst, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
@@ -38,7 +38,7 @@ func newSCPCmd() *cobra.Command {
 			input := &ssm.StartSessionInput{
 				DocumentName: &docName,
 				Parameters:   map[string][]string{"portNumber": {opts.port}},
-				Target:       &instanceID,
+				Target:       &inst.ID,
 			}
 			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
@@ -55,7 +55,7 @@ func newSCPCmd() *cobra.Command {
 
 			if err := session.RunSCP(&internal.RunSCPInput{
 				User:       opts.user,
-				InstanceID: instanceID,
+				InstanceID: inst.ID,
 				Identity:   opts.identity,
 				Sources:    args[:pos],
 				Target:     args[pos],

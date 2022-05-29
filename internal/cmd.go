@@ -16,7 +16,7 @@ type Command struct {
 	timeout    time.Duration
 }
 
-func NewLinuxCommand(cfg *Config, instanceID string, command string) (*Command, error) {
+func NewCommand(cfg *Config, inst *Instance, command string) (*Command, error) {
 	client := ssm.NewFromConfig(cfg.awsCfg)
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
 
@@ -25,9 +25,13 @@ func NewLinuxCommand(cfg *Config, instanceID string, command string) (*Command, 
 	// only linux support (window = "AWS-RunPowerShellScript")
 	docName := "AWS-RunShellScript"
 
+	if inst.Platform == "Windows" {
+		docName = "AWS-RunPowerShellScript"
+	}
+
 	input := &ssm.SendCommandInput{
 		DocumentName:   &docName,
-		InstanceIds:    []string{instanceID},
+		InstanceIds:    []string{inst.ID},
 		TimeoutSeconds: int32(60), // 60 seconds
 		CloudWatchOutputConfig: &types.CloudWatchOutputConfig{
 			CloudWatchOutputEnabled: true,
@@ -44,7 +48,7 @@ func NewLinuxCommand(cfg *Config, instanceID string, command string) (*Command, 
 
 	return &Command{
 		client:     client,
-		instanceID: instanceID,
+		instanceID: inst.ID,
 		output:     output,
 		timeout:    cfg.timeout,
 	}, nil

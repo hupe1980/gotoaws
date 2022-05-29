@@ -30,7 +30,7 @@ func newSSHCmd() *cobra.Command {
 				return err
 			}
 
-			instanceID, err := findInstance(cfg, opts.target)
+			inst, err := findInstance(cfg, opts.target)
 			if err != nil {
 				return err
 			}
@@ -39,7 +39,7 @@ func newSSHCmd() *cobra.Command {
 			input := &ssm.StartSessionInput{
 				DocumentName: &docName,
 				Parameters:   map[string][]string{"portNumber": {opts.port}},
-				Target:       &instanceID,
+				Target:       &inst.ID,
 			}
 			session, err := internal.NewEC2Session(cfg, input)
 			if err != nil {
@@ -49,7 +49,7 @@ func newSSHCmd() *cobra.Command {
 
 			if err := session.RunSSH(&internal.RunSSHInput{
 				User:                opts.user,
-				InstanceID:          instanceID,
+				InstanceID:          inst.ID,
 				Identity:            opts.identity,
 				LocalPortForwarding: opts.fwd,
 				Command:             strings.Join(args, " "),
