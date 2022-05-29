@@ -46,6 +46,7 @@ func newRunCmd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "name|ID|IP|DNS of the instance (optional)")
 	cmd.Flags().StringVarP(&opts.cmd, "cmd", "c", "", "command to exceute (required)")
+
 	if err := cmd.MarkFlagRequired("cmd"); err != nil {
 		panic(err)
 	}

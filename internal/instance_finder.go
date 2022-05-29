@@ -19,14 +19,6 @@ type Instance struct {
 	ID   string
 }
 
-type EC2Client interface {
-	DescribeInstances(ctx context.Context, params *ec2.DescribeInstancesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInstancesOutput, error)
-}
-
-type SSMClient interface {
-	DescribeInstanceInformation(ctx context.Context, params *ssm.DescribeInstanceInformationInput, optFns ...func(*ssm.Options)) (*ssm.DescribeInstanceInformationOutput, error)
-}
-
 type InstanceFinder interface {
 	Find() ([]Instance, error)
 	FindByIdentifier(identifier string) ([]Instance, error)
@@ -34,8 +26,8 @@ type InstanceFinder interface {
 
 type instanceFinder struct {
 	timeout time.Duration
-	ec2     EC2Client
-	ssm     SSMClient
+	ec2     ec2.DescribeInstancesAPIClient
+	ssm     ssm.DescribeInstanceInformationAPIClient
 }
 
 func NewInstanceFinder(cfg *Config) InstanceFinder {
@@ -55,10 +47,11 @@ func (f *instanceFinder) Find() ([]Instance, error) {
 		return nil, err
 	}
 
-	var instanceIDs []string
+	instanceIDs := []string{}
 	for _, i := range ec2Instances {
 		instanceIDs = append(instanceIDs, *i.InstanceId)
 	}
+
 	instanceIDFilter := types.Filter{
 		Name:   aws.String("instance-id"),
 		Values: instanceIDs,
@@ -68,30 +61,40 @@ func (f *instanceFinder) Find() ([]Instance, error) {
 		Values: []string{"running"},
 	}
 	input := &ec2.DescribeInstancesInput{
-		Filters: []types.Filter{instanceRunningFilter, instanceIDFilter},
+		Filters:    []types.Filter{instanceRunningFilter, instanceIDFilter},
+		MaxResults: aws.Int32(100),
 	}
 
-	output, err := f.ec2.DescribeInstances(ctx, input)
-	if err != nil {
-		return nil, err
-	}
+	p := ec2.NewDescribeInstancesPaginator(f.ec2, input)
 
-	var instances []Instance
-	for _, r := range output.Reservations {
-		for _, inst := range r.Instances {
-			name := ""
-			for _, tag := range inst.Tags {
-				if *tag.Key == "Name" {
-					name = *tag.Value
-					break
+	instances := []Instance{}
+
+	for p.HasMorePages() {
+		page, err := p.NextPage(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, r := range page.Reservations {
+			for _, inst := range r.Instances {
+				name := ""
+
+				for _, tag := range inst.Tags {
+					if *tag.Key == "Name" {
+						name = *tag.Value
+						break
+					}
 				}
+
+				instances = append(instances, Instance{name, *inst.InstanceId})
 			}
-			instances = append(instances, Instance{name, *inst.InstanceId})
 		}
 	}
+
 	for _, mi := range managedInstances {
 		instances = append(instances, Instance{*mi.Name, *mi.InstanceId})
 	}
+
 	return instances, nil
 }
 
@@ -100,25 +103,33 @@ func (f *instanceFinder) FindByIdentifier(identifier string) ([]Instance, error)
 	defer cancel()
 
 	input := &ec2.DescribeInstancesInput{
-		Filters: []types.Filter{parseIdentifier(identifier)},
+		Filters:    []types.Filter{parseIdentifier(identifier)},
+		MaxResults: aws.Int32(100),
 	}
 
-	output, err := f.ec2.DescribeInstances(ctx, input)
-	if err != nil {
-		return nil, err
-	}
+	p := ec2.NewDescribeInstancesPaginator(f.ec2, input)
 
 	var instances []Instance
-	for _, r := range output.Reservations {
-		for _, inst := range r.Instances {
-			name := ""
-			for _, tag := range inst.Tags {
-				if *tag.Key == "Name" {
-					name = *tag.Value
-					break
+
+	for p.HasMorePages() {
+		page, err := p.NextPage(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, r := range page.Reservations {
+			for _, inst := range r.Instances {
+				name := ""
+
+				for _, tag := range inst.Tags {
+					if *tag.Key == "Name" {
+						name = *tag.Value
+						break
+					}
 				}
+
+				instances = append(instances, Instance{name, *inst.InstanceId})
 			}
-			instances = append(instances, Instance{name, *inst.InstanceId})
 		}
 	}
 
@@ -138,25 +149,35 @@ func (f *instanceFinder) findSSMManagedInstances() ([]ssmTypes.InstanceInformati
 		Values: []string{"Online"},
 	}
 	input := &ssm.DescribeInstanceInformationInput{
-		Filters: []ssmTypes.InstanceInformationStringFilter{onlineFilter},
+		Filters:    []ssmTypes.InstanceInformationStringFilter{onlineFilter},
+		MaxResults: 50,
 	}
-	out, err := f.ssm.DescribeInstanceInformation(ctx, input)
-	if err != nil {
-		return nil, nil, err
+
+	p := ssm.NewDescribeInstanceInformationPaginator(f.ssm, input)
+
+	var ec2Instances []ssmTypes.InstanceInformation
+
+	var managedInstances []ssmTypes.InstanceInformation
+
+	for p.HasMorePages() {
+		page, err := p.NextPage(ctx)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		for _, i := range page.InstanceInformationList {
+			if i.ResourceType != ssmTypes.ResourceTypeEc2Instance {
+				managedInstances = append(managedInstances, i)
+			} else {
+				ec2Instances = append(ec2Instances, i)
+			}
+		}
 	}
-	if len(out.InstanceInformationList) == 0 {
+
+	if len(ec2Instances) == 0 && len(managedInstances) == 0 {
 		return nil, nil, fmt.Errorf("no ssm managed instances found")
 	}
 
-	var ec2Instances []ssmTypes.InstanceInformation
-	var managedInstances []ssmTypes.InstanceInformation
-	for _, i := range out.InstanceInformationList {
-		if i.ResourceType != ssmTypes.ResourceTypeEc2Instance {
-			managedInstances = append(managedInstances, i)
-		} else {
-			ec2Instances = append(ec2Instances, i)
-		}
-	}
 	return ec2Instances, managedInstances, nil
 }
 
@@ -167,34 +188,41 @@ func parseIdentifier(identifier string) types.Filter {
 			Values: []string{identifier},
 		}
 	}
+
 	ip := net.ParseIP(identifier)
+
 	if ip != nil {
 		_, private24BitBlock, _ := net.ParseCIDR("10.0.0.0/8")
 		_, private20BitBlock, _ := net.ParseCIDR("172.16.0.0/12")
 		_, private16BitBlock, _ := net.ParseCIDR("192.168.0.0/16")
+
 		if private24BitBlock.Contains(ip) || private20BitBlock.Contains(ip) || private16BitBlock.Contains(ip) {
 			return types.Filter{
 				Name:   aws.String("private-ip-address"),
 				Values: []string{identifier},
 			}
 		}
+
 		return types.Filter{
 			Name:   aws.String("ip-address"),
 			Values: []string{identifier},
 		}
 	}
+
 	if strings.HasSuffix(identifier, "compute.amazonaws.com") {
 		return types.Filter{
 			Name:   aws.String("dns-name"),
 			Values: []string{identifier},
 		}
 	}
+
 	if strings.HasSuffix(identifier, "compute.internal") {
 		return types.Filter{
 			Name:   aws.String("private-dns-name"),
 			Values: []string{identifier},
 		}
 	}
+
 	return types.Filter{
 		Name:   aws.String("tag:Name"),
 		Values: []string{identifier},
