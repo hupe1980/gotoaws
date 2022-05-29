@@ -9,6 +9,7 @@ import (
 
 func TestRootCmdHelp(t *testing.T) {
 	var b bytes.Buffer
+
 	cmd := newRootCmd("")
 	cmd.SetOut(&b)
 	cmd.SetArgs([]string{"-h"})
@@ -17,6 +18,7 @@ func TestRootCmdHelp(t *testing.T) {
 
 func TestRootCmdVersion(t *testing.T) {
 	var b bytes.Buffer
+
 	cmd := newRootCmd("1.2.3")
 	cmd.SetOut(&b)
 	cmd.SetArgs([]string{"-v"})

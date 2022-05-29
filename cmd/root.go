@@ -48,6 +48,7 @@ maintain bastion hosts, or manage SSH keys.`,
 		newECSCmd(),
 		newCompletionCmd(),
 	)
+
 	return cmd
 }
 
@@ -91,15 +92,19 @@ func findInstance(cfg *internal.Config, identifier string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+
 		if len(instances) > 1 {
 			return chooseInstance(instances)
 		}
+
 		return instances[0].ID, nil
 	}
+
 	instances, err := finder.Find()
 	if err != nil {
 		return "", err
 	}
+
 	return chooseInstance(instances)
 }
 
@@ -125,10 +130,12 @@ func chooseInstance(instances []internal.Instance) (string, error) {
 		Size:      15,
 		Searcher:  searcher,
 	}
+
 	i, _, err := prompt.Run()
 	if err != nil {
 		return "", err
 	}
+
 	return instances[i].ID, nil
 }
 
@@ -139,15 +146,19 @@ func findContainer(cfg *internal.Config, cluster string, task string, cname stri
 		if err != nil {
 			return "", "", err
 		}
+
 		if len(containers) > 1 {
 			return chooseContainer(containers)
 		}
+
 		return containers[0].Task, containers[0].Name, nil
 	}
+
 	containers, err := finder.Find(cluster)
 	if err != nil {
 		return "", "", err
 	}
+
 	return chooseContainer(containers)
 }
 
@@ -173,9 +184,11 @@ func chooseContainer(containers []internal.Container) (string, string, error) {
 		Size:      15,
 		Searcher:  searcher,
 	}
+
 	i, _, err := prompt.Run()
 	if err != nil {
 		return "", "", err
 	}
+
 	return containers[i].Task, containers[i].Name, nil
 }

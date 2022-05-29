@@ -4,7 +4,7 @@ import (
 	"github.com/hupe1980/gotoaws/cmd"
 )
 
-// nolint: gochecknoglobals
+// nolint: gochecknoglobals // ok
 var (
 	version = "dev"
 )

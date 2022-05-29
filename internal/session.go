@@ -42,7 +42,7 @@ type RunSCPInput struct {
 
 type session struct {
 	id         *string
-	streamUrl  *string
+	streamURL  *string
 	tokenValue *string
 	client     *ssm.Client
 	input      *ssm.StartSessionInput
@@ -67,6 +67,7 @@ type EC2Session interface {
 func NewECSSession(cfg *Config, input *ecs.ExecuteCommandInput) (ECSSession, error) {
 	client := ecs.NewFromConfig(cfg.awsCfg)
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
+
 	defer cancel()
 
 	output, err := client.ExecuteCommand(ctx, input)
@@ -76,7 +77,7 @@ func NewECSSession(cfg *Config, input *ecs.ExecuteCommandInput) (ECSSession, err
 
 	return &session{
 		id:         output.Session.SessionId,
-		streamUrl:  output.Session.StreamUrl,
+		streamURL:  output.Session.StreamUrl,
 		tokenValue: output.Session.TokenValue,
 		client:     ssm.NewFromConfig(cfg.awsCfg),
 		input: &ssm.StartSessionInput{
@@ -92,6 +93,7 @@ func NewECSSession(cfg *Config, input *ecs.ExecuteCommandInput) (ECSSession, err
 func NewEC2Session(cfg *Config, input *ssm.StartSessionInput) (EC2Session, error) {
 	client := ssm.NewFromConfig(cfg.awsCfg)
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
+
 	defer cancel()
 
 	output, err := client.StartSession(ctx, input)
@@ -101,7 +103,7 @@ func NewEC2Session(cfg *Config, input *ssm.StartSessionInput) (EC2Session, error
 
 	return &session{
 		id:         output.SessionId,
-		streamUrl:  output.StreamUrl,
+		streamURL:  output.StreamUrl,
 		tokenValue: output.TokenValue,
 		client:     client,
 		input:      input,
@@ -120,18 +122,20 @@ func (sess *session) Close() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func (sess *session) RunPlugin() error {
 	sessJSON, err := json.Marshal(map[string]*string{
 		"SessionId":  sess.id,
-		"StreamUrl":  sess.streamUrl,
+		"StreamUrl":  sess.streamURL,
 		"TokenValue": sess.tokenValue,
 	})
 	if err != nil {
 		return err
 	}
+
 	inputJSON, err := json.Marshal(sess.input)
 	if err != nil {
 		return err
@@ -145,15 +149,19 @@ func (sess *session) RunSSH(input *RunSSHInput) error {
 	if err != nil {
 		return err
 	}
+
 	args := []string{"-o", pc}
+
 	for _, sep := range strings.Split(sshArgs(input), " ") {
 		if sep != "" {
 			args = append(args, sep)
 		}
 	}
+
 	if err := runSubprocess("ssh", args...); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -162,34 +170,41 @@ func (sess *session) RunSCP(input *RunSCPInput) error {
 	if err != nil {
 		return err
 	}
+
 	args := []string{"-o", pc}
+
 	for _, sep := range strings.Split(scpArgs(input), " ") {
 		if sep != "" {
 			args = append(args, sep)
 		}
 	}
+
 	fmt.Println(strings.Join(args, " "))
+
 	if err := runSubprocess("scp", args...); err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func (sess *session) proxyCommand() (string, error) {
 	sessJSON, err := json.Marshal(map[string]*string{
 		"SessionId":  sess.id,
-		"StreamUrl":  sess.streamUrl,
+		"StreamUrl":  sess.streamURL,
 		"TokenValue": sess.tokenValue,
 	})
 	if err != nil {
 		return "", err
 	}
+
 	inputJSON, err := json.Marshal(sess.input)
 	if err != nil {
 		return "", err
 	}
 
 	pc := fmt.Sprintf("ProxyCommand=%s '%s' %s %s %s '%s'", sess.plugin, string(sessJSON), sess.region, "StartSession", sess.profile, string(inputJSON))
+
 	return pc, nil
 }
 
@@ -204,6 +219,7 @@ func runSubprocess(process string, args ...string) error {
 	if err := call.Run(); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -212,9 +228,11 @@ func sshArgs(input *RunSSHInput) string {
 	if input.LocalPortForwarding != "" {
 		ssh = fmt.Sprintf("-L %s %s", input.LocalPortForwarding, ssh)
 	}
+
 	if input.Command != "" {
 		ssh = fmt.Sprintf("%s %s", ssh, input.Command)
 	}
+
 	return ssh
 }
 
@@ -222,9 +240,12 @@ func scpArgs(input *RunSCPInput) string {
 	if input.Mode == SCPModeSending {
 		return fmt.Sprintf("-i %s %s %s@%s:%s", input.Identity, strings.Join(input.Sources, " "), input.User, input.InstanceID, input.Target)
 	}
+
 	s := input.Sources[0]
+
 	if len(input.Sources) > 1 {
 		s = fmt.Sprintf("{%s}", strings.Join(input.Sources, ","))
 	}
+
 	return fmt.Sprintf("-i %s %s@%s:%s %s", input.Identity, input.User, input.InstanceID, s, input.Target)
 }

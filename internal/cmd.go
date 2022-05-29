@@ -19,6 +19,7 @@ type Command struct {
 func NewLinuxCommand(cfg *Config, instanceID string, command string) (*Command, error) {
 	client := ssm.NewFromConfig(cfg.awsCfg)
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
+
 	defer cancel()
 
 	// only linux support (window = "AWS-RunPowerShellScript")
@@ -65,11 +66,12 @@ func (cmd *Command) Result() (string, error) {
 		if err != nil {
 			return "", err
 		}
+
 		switch output.Status {
 		case types.CommandInvocationStatusPending, types.CommandInvocationStatusInProgress, types.CommandInvocationStatusDelayed:
 		case types.CommandInvocationStatusSuccess:
 			return *output.StandardOutputContent, nil
-		default:
+		case types.CommandInvocationStatusCancelled, types.CommandInvocationStatusCancelling, types.CommandInvocationStatusFailed, types.CommandInvocationStatusTimedOut:
 			return "", fmt.Errorf(*output.StandardErrorContent)
 		}
 	}
