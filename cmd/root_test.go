@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRootCmdHelp(t *testing.T) {
@@ -13,7 +13,7 @@ func TestRootCmdHelp(t *testing.T) {
 	cmd := newRootCmd("")
 	cmd.SetOut(&b)
 	cmd.SetArgs([]string{"-h"})
-	require.NoError(t, cmd.Execute())
+	assert.NoError(t, cmd.Execute())
 }
 
 func TestRootCmdVersion(t *testing.T) {
@@ -22,6 +22,6 @@ func TestRootCmdVersion(t *testing.T) {
 	cmd := newRootCmd("1.2.3")
 	cmd.SetOut(&b)
 	cmd.SetArgs([]string{"-v"})
-	require.NoError(t, cmd.Execute())
-	require.Equal(t, "gotoaws version 1.2.3\n", b.String())
+	assert.NoError(t, cmd.Execute())
+	assert.Equal(t, "gotoaws version 1.2.3\n", b.String())
 }

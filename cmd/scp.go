@@ -24,7 +24,7 @@ func newSCPCmd() *cobra.Command {
 		SilenceErrors: true,
 		Args:          cobra.MinimumNArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := newConfig(cmd)
+			cfg, err := newConfig()
 			if err != nil {
 				return err
 			}

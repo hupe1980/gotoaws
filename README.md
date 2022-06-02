@@ -53,6 +53,7 @@ Available Commands:
   help        Help about any command
 
 Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
   -h, --help               help for gotoaws
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
@@ -80,6 +81,7 @@ Flags:
   -h, --help   help for ec2
 
 Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
       --silent             run gotoaws without printing logs
@@ -100,6 +102,7 @@ Flags:
   -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
       --silent             run gotoaws without printing logs
@@ -122,6 +125,7 @@ Flags:
   -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
       --silent             run gotoaws without printing logs
@@ -142,6 +146,7 @@ Flags:
   -t, --target string   name|ID|IP|DNS of the instance (optional)
 
 Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
       --silent             run gotoaws without printing logs
@@ -165,6 +170,7 @@ Flags:
   -l, --user string       SSH user to us (optional) (default "ec2-user")
 
 Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
       --silent             run gotoaws without printing logs
@@ -188,6 +194,7 @@ Flags:
   -l, --user string       SCP user to us (optional) (default "ec2-user")
 
 Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
       --silent             run gotoaws without printing logs
@@ -208,6 +215,7 @@ Flags:
   -h, --help   help for ecs
 
 Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
       --silent             run gotoaws without printing logs
@@ -232,6 +240,7 @@ Flags:
       --task string        arn or id of the task (optional)
 
 Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
       --profile string     AWS profile (optional)
       --region string      AWS region (optional)
       --silent             run gotoaws without printing logs

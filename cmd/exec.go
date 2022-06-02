@@ -22,7 +22,7 @@ func newExecCmd() *cobra.Command {
 		SilenceErrors: true,
 		Example:       "gotoaws ecs exec --cluster demo-cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := newConfig(cmd)
+			cfg, err := newConfig()
 			if err != nil {
 				return err
 			}

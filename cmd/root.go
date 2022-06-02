@@ -3,12 +3,14 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/hupe1980/gotoaws/internal"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func Execute(version string) {
@@ -19,61 +21,78 @@ func Execute(version string) {
 	}
 }
 
-type rootOptions struct {
-	profile string
-	region  string
-	timeout time.Duration
-	silent  bool
-}
-
 func newRootCmd(version string) *cobra.Command {
-	opts := &rootOptions{}
+	var cfgFile string
+
+	cobra.OnInitialize(initConfig(cfgFile))
+
 	cmd := &cobra.Command{
 		Use:     "gotoaws",
 		Version: version,
 		Short:   "Connect to your EC2 instance or ECS container without the need to open inbound ports, maintain bastion hosts, or manage SSH keys",
-		Long: `gotoaws is an interactive CLI tool 
-that you can use to connect to your AWS resources (EC2, ECS container) 
-using the AWS Systems Manager Session Manager. 
-It provides secure and auditable resource management without the need to open inbound ports, 
-maintain bastion hosts, or manage SSH keys.`,
+		Long: `gotoaws is an interactive CLI tool that you can use to connect to your AWS resources 
+(EC2, ECS container) using the AWS Systems Manager Session Manager. 
+It provides secure and auditable resource management without the need to open inbound 
+ports, maintain bastion hosts, or manage SSH keys.`,
 		SilenceErrors: true,
 	}
-	cmd.PersistentFlags().StringVar(&opts.profile, "profile", "", "AWS profile (optional)")
-	cmd.PersistentFlags().StringVar(&opts.region, "region", "", "AWS region (optional)")
-	cmd.PersistentFlags().DurationVar(&opts.timeout, "timeout", time.Second*15, "timeout for network requests")
-	cmd.PersistentFlags().BoolVar(&opts.silent, "silent", false, "run gotoaws without printing logs")
+
+	cmd.PersistentFlags().String("profile", "", "AWS profile (optional)")
+	cmd.PersistentFlags().String("region", "", "AWS region (optional)")
+	cmd.PersistentFlags().Duration("timeout", time.Second*15, "timeout for network requests")
+	cmd.PersistentFlags().Bool("silent", false, "run gotoaws without printing logs")
+	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default \"$HOME/.config/configstore/gotoaws.json\")")
+
 	cmd.AddCommand(
 		newEC2Cmd(),
 		newECSCmd(),
 		newCompletionCmd(),
 	)
 
+	err := viper.BindPFlag("profile", cmd.PersistentFlags().Lookup("profile"))
+	cobra.CheckErr(err)
+
+	err = viper.BindPFlag("region", cmd.PersistentFlags().Lookup("region"))
+	cobra.CheckErr(err)
+
+	err = viper.BindPFlag("timeout", cmd.PersistentFlags().Lookup("timeout"))
+	cobra.CheckErr(err)
+
+	err = viper.BindPFlag("silent", cmd.PersistentFlags().Lookup("silent"))
+	cobra.CheckErr(err)
+
 	return cmd
 }
 
-func newConfig(cmd *cobra.Command) (*internal.Config, error) {
-	profile, err := cmd.Root().PersistentFlags().GetString("profile")
-	if err != nil {
-		return nil, err
-	}
+func initConfig(cfgFile string) func() {
+	return func() {
+		if cfgFile != "" {
+			viper.SetConfigFile(cfgFile)
+		} else {
+			home, err := os.UserHomeDir()
+			cobra.CheckErr(err)
 
-	region, err := cmd.Root().PersistentFlags().GetString("region")
-	if err != nil {
-		return nil, err
-	}
+			viper.AddConfigPath(filepath.Join(home, ".config", "configstore"))
+			viper.SetConfigType("json")
+			viper.SetConfigName("gotoaws")
+		}
 
-	timeout, err := cmd.Root().PersistentFlags().GetDuration("timeout")
-	if err != nil {
-		return nil, err
+		if err := viper.ReadInConfig(); err == nil {
+			silent := viper.GetBool("silent")
+			if !silent {
+				fmt.Fprintf(os.Stdout, "Using config file: %s\n", viper.ConfigFileUsed())
+			}
+		}
 	}
+}
+
+func newConfig() (*internal.Config, error) {
+	profile := viper.GetString("profile")
+	region := viper.GetString("region")
+	timeout := viper.GetDuration("timeout")
+	silent := viper.GetBool("silent")
 
 	cfg, err := internal.NewConfig(profile, region, timeout)
-	if err != nil {
-		return nil, err
-	}
-
-	silent, err := cmd.Root().PersistentFlags().GetBool("silent")
 	if err != nil {
 		return nil, err
 	}

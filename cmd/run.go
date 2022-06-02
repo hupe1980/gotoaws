@@ -22,7 +22,7 @@ func newRunCmd() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := newConfig(cmd)
+			cfg, err := newConfig()
 			if err != nil {
 				return err
 			}

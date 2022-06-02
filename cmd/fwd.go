@@ -23,7 +23,7 @@ gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := newConfig(cmd)
+			cfg, err := newConfig()
 			if err != nil {
 				return err
 			}
