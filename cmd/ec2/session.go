@@ -1,8 +1,9 @@
-package cmd
+package ec2
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/hupe1980/gotoaws/internal"
+	"github.com/hupe1980/gotoaws/pkg/ec2"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +20,7 @@ func newSessionCmd() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := newConfig()
+			cfg, err := internal.NewConfigFromFlags()
 			if err != nil {
 				return err
 			}
@@ -30,7 +31,7 @@ func newSessionCmd() *cobra.Command {
 			}
 
 			input := &ssm.StartSessionInput{Target: &inst.ID}
-			session, err := internal.NewEC2Session(cfg, input)
+			session, err := ec2.NewSession(cfg, input)
 			if err != nil {
 				return err
 			}
@@ -43,7 +44,7 @@ func newSessionCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "name|ID|IP|DNS of the instance (optional)")
+	cmd.Flags().StringVarP(&opts.target, "target", "t", "", "name|ID|IP|DNS of the instance")
 
 	return cmd
 }

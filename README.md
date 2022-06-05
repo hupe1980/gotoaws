@@ -50,13 +50,14 @@ Available Commands:
   completion  Prints shell autocompletion scripts for gotoaws
   ec2         Connect to ec2
   ecs         Connect to ecs
+  eks         Connect to eks
   help        Help about any command
 
 Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
   -h, --help               help for gotoaws
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
   -v, --version            version for gotoaws
@@ -82,8 +83,8 @@ Flags:
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 
@@ -99,12 +100,12 @@ gotoaws ec2 session -t myserver
 
 Flags:
   -h, --help            help for session
-  -t, --target string   name|ID|IP|DNS of the instance (optional)
+  -t, --target string   name|ID|IP|DNS of the instance
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
@@ -119,15 +120,15 @@ gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com
 
 Flags:
   -h, --help            help for fwd
-  -H, --host string     remote host to forward to (optional)
+  -H, --host string     remote host to forward to
   -l, --local string    local port to use (required)
   -r, --remote string   remote port to forward to (required)
-  -t, --target string   name|ID|IP|DNS of the instance (optional)
+  -t, --target string   name|ID|IP|DNS of the instance
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
@@ -135,20 +136,20 @@ Global Flags:
 #### Run commands
 ```
 Usage:
-  gotoaws ec2 run [flags]
+  gotoaws ec2 run [flags] -- COMMAND [args...]
 
 Examples:
-gotoaws ec2 run -t myserver -c 'cat /etc/passwd'
+gotoaws ec2 run -- date
+gotoaws ec2 run -t myserver -- date
 
 Flags:
-  -c, --cmd string      command to exceute (required)
   -h, --help            help for run
-  -t, --target string   name|ID|IP|DNS of the instance (optional)
+  -t, --target string   name|ID|IP|DNS of the instance
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
@@ -164,15 +165,15 @@ gotoaws ssh -t myserver -i key.pem
 Flags:
   -h, --help              help for ssh
   -i, --identity string   file from which the identity (private key) for public key authentication is read (required)
-  -L, --lforward string   local port forwarding (optional)
-  -p, --port string       SSH port to us (optional) (default "22")
-  -t, --target string     name|ID|IP|DNS of the instance (optional)
-  -l, --user string       SSH user to us (optional) (default "ec2-user")
+  -L, --lforward string   local port forwarding
+  -p, --port string       SSH port to us (default "22")
+  -t, --target string     name|ID|IP|DNS of the instance
+  -l, --user string       SSH user to us (default "ec2-user")
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
@@ -188,15 +189,15 @@ gotoaws ec2 scp file.txt /opt/ -t myserver -i key.pem
 Flags:
   -h, --help              help for scp
   -i, --identity string   file from which the identity (private key) for public key authentication is read (required)
-  -p, --port string       SSH port to us (optional) (default "22")
-  -R, --recv              receive files from target (optional)
-  -t, --target string     name|ID|IP|DNS of the instance (optional)
-  -l, --user string       SCP user to us (optional) (default "ec2-user")
+  -p, --port string       SSH port to us (default "22")
+  -R, --recv              receive files from target
+  -t, --target string     name|ID|IP|DNS of the instance
+  -l, --user string       SCP user to us (default "ec2-user")
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
@@ -209,42 +210,131 @@ Usage:
   gotoaws ecs [command]
 
 Available Commands:
-  exec        Exec into container
+  exec        Execute a command in a container
 
 Flags:
   -h, --help   help for ecs
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 
 Use "gotoaws ecs [command] --help" for more information about a command.
 ```
 
-### Exec into container
+### Execute a command in a container
 ```
 Usage:
-  gotoaws ecs exec [flags]
+  gotoaws ecs exec [flags] -- COMMAND [args...]
 
 Examples:
 gotoaws ecs exec --cluster demo-cluster
 
 Flags:
-      --cluster string     arn or name of the cluster (optional) (default "default")
-  -c, --cmd string         command to exceute (optional) (default "/bin/sh")
-      --container string   name of the container. A container name only needs to be specified for tasks containing multiple containers. (optional)
+      --cluster string     arn or name of the cluster (default "default")
+      --container string   name of the container. A container name only needs to be specified for tasks containing multiple containers
   -h, --help               help for exec
-      --task string        arn or id of the task (optional)
+      --task string        arn or id of the task
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
-      --profile string     AWS profile (optional)
-      --region string      AWS region (optional)
+      --profile string     AWS profile
+      --region string      AWS region
       --silent             run gotoaws without printing logs
       --timeout duration   timeout for network requests (default 15s)
 ```
+
+## EKS
+```
+Usage:
+  gotoaws eks [command]
+
+Available Commands:
+  exec              Execute a command in a container
+  get-token         Get a token for authentication with an Amazon EKS cluster
+  update-kubeconfig Configures kubectl so that you can connect to an Amazon EKS cluster
+
+Flags:
+  -h, --help   help for eks
+
+Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
+      --profile string     AWS profile
+      --region string      AWS region
+      --silent             run gotoaws without printing logs
+      --timeout duration   timeout for network requests (default 15s)
+
+Use "gotoaws eks [command] --help" for more information about a command.
+```
+
+### Execute a command in a container
+```
+Usage:
+  gotoaws eks exec [flags] -- COMMAND [args...]
+
+Examples:
+gotoaws eks exec --cluster gotoaws --role cluster-admin
+gotoaws eks exec --cluster gotoaws --role cluster-admin -- /bin/sh
+gotoaws eks exec --cluster gotoaws --role cluster-admin -- cat /etc/passwd
+gotoaws eks exec --cluster gotoaws --role cluster-admin --namespace default --pod nginx -- date
+
+Flags:
+      --cluster string     arn or name of the cluster (required)
+  -c, --container string   name of the container
+  -h, --help               help for exec
+  -n, --namespace string   namespace of the pod (default "all namespaces"
+  -p, --pod string         name of the pod
+  -r, --role string        arn or name of the role
+
+Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
+      --profile string     AWS profile
+      --region string      AWS region
+      --silent             run gotoaws without printing logs
+      --timeout duration   timeout for network requests (default 15s)
+```
+
+### Get a token for authentication with an Amazon EKS cluster
+```
+Usage:
+  gotoaws eks get-token [flags]
+
+Flags:
+      --cluster string   arn or name of the cluster (required)
+  -h, --help             help for get-token
+      --role string      arn or name of the role
+
+Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
+      --profile string     AWS profile
+      --region string      AWS region
+      --silent             run gotoaws without printing logs
+      --timeout duration   timeout for network requests (default 15s)
+```
+
+### Configures kubectl so that you can connect to an Amazon EKS cluster
+```
+Usage:
+  gotoaws eks update-kubeconfig [flags]
+
+Flags:
+      --alias string     alias for the cluster context name (default "arn of the cluster"
+      --cluster string   arn or name of the cluster
+  -h, --help             help for update-kubeconfig
+      --role string      arn or name of the role
+
+Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
+      --profile string     AWS profile
+      --region string      AWS region
+      --silent             run gotoaws without printing logs
+      --timeout duration   timeout for network requests (default 15s)
+```
+
+
+
 ## License
 [MIT](LICENCE)

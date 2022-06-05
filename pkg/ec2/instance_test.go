@@ -1,4 +1,4 @@
-package internal
+package ec2
 
 import (
 	"context"
@@ -6,18 +6,18 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	aws_ec2 "github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/stretchr/testify/assert"
 )
 
 type MockEC2Client struct {
-	DescribeInstancesOutput *ec2.DescribeInstancesOutput
+	DescribeInstancesOutput *aws_ec2.DescribeInstancesOutput
 	DescribeInstancesError  error
 }
 
-func (m *MockEC2Client) DescribeInstances(ctx context.Context, params *ec2.DescribeInstancesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInstancesOutput, error) {
+func (m *MockEC2Client) DescribeInstances(ctx context.Context, params *aws_ec2.DescribeInstancesInput, optFns ...func(*aws_ec2.Options)) (*aws_ec2.DescribeInstancesOutput, error) {
 	return m.DescribeInstancesOutput, m.DescribeInstancesError
 }
 
@@ -35,8 +35,8 @@ func TestInstanceFinder(t *testing.T) {
 		t.Run("no ssm with identifier", func(t *testing.T) {
 			finder := &instanceFinder{
 				timeout: time.Second * 15,
-				ec2: &MockEC2Client{
-					DescribeInstancesOutput: &ec2.DescribeInstancesOutput{
+				ec2Client: &MockEC2Client{
+					DescribeInstancesOutput: &aws_ec2.DescribeInstancesOutput{
 						Reservations: []types.Reservation{},
 					},
 					DescribeInstancesError: nil,

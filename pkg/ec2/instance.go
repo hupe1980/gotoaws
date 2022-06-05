@@ -1,4 +1,4 @@
-package internal
+package ec2
 
 import (
 	"context"
@@ -8,12 +8,14 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	aws_ec2 "github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	ssmTypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
+	"github.com/hupe1980/gotoaws/pkg/config"
 )
 
+// An object representing an instance.
 type Instance struct {
 	Name     string
 	ID       string
@@ -26,16 +28,16 @@ type InstanceFinder interface {
 }
 
 type instanceFinder struct {
-	timeout time.Duration
-	ec2     ec2.DescribeInstancesAPIClient
-	ssm     ssm.DescribeInstanceInformationAPIClient
+	timeout   time.Duration
+	ec2Client aws_ec2.DescribeInstancesAPIClient
+	ssmClient ssm.DescribeInstanceInformationAPIClient
 }
 
-func NewInstanceFinder(cfg *Config) InstanceFinder {
+func NewInstanceFinder(cfg *config.Config) InstanceFinder {
 	return &instanceFinder{
-		timeout: cfg.timeout,
-		ec2:     ec2.NewFromConfig(cfg.awsCfg),
-		ssm:     ssm.NewFromConfig(cfg.awsCfg),
+		timeout:   cfg.Timeout,
+		ec2Client: aws_ec2.NewFromConfig(cfg.AWSConfig),
+		ssmClient: ssm.NewFromConfig(cfg.AWSConfig),
 	}
 }
 
@@ -61,12 +63,12 @@ func (f *instanceFinder) Find() ([]Instance, error) {
 		Name:   aws.String("instance-state-name"),
 		Values: []string{"running"},
 	}
-	input := &ec2.DescribeInstancesInput{
+	input := &aws_ec2.DescribeInstancesInput{
 		Filters:    []types.Filter{instanceRunningFilter, instanceIDFilter},
 		MaxResults: aws.Int32(100),
 	}
 
-	p := ec2.NewDescribeInstancesPaginator(f.ec2, input)
+	p := aws_ec2.NewDescribeInstancesPaginator(f.ec2Client, input)
 
 	instances := []Instance{}
 
@@ -103,12 +105,12 @@ func (f *instanceFinder) FindByIdentifier(identifier string) ([]Instance, error)
 	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
 	defer cancel()
 
-	input := &ec2.DescribeInstancesInput{
+	input := &aws_ec2.DescribeInstancesInput{
 		Filters:    []types.Filter{parseIdentifier(identifier)},
 		MaxResults: aws.Int32(100),
 	}
 
-	p := ec2.NewDescribeInstancesPaginator(f.ec2, input)
+	p := aws_ec2.NewDescribeInstancesPaginator(f.ec2Client, input)
 
 	var instances []Instance
 
@@ -154,7 +156,7 @@ func (f *instanceFinder) findSSMManagedInstances() ([]ssmTypes.InstanceInformati
 		MaxResults: 50,
 	}
 
-	p := ssm.NewDescribeInstanceInformationPaginator(f.ssm, input)
+	p := ssm.NewDescribeInstanceInformationPaginator(f.ssmClient, input)
 
 	var ec2Instances []ssmTypes.InstanceInformation
 

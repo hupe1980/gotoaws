@@ -1,4 +1,4 @@
-package internal
+package ecs
 
 import (
 	"context"
@@ -8,33 +8,38 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
-	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	aws_ecs "github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/hupe1980/gotoaws/pkg/config"
 )
 
+// An object representing a container.
 type Container struct {
+	// The name of the taks.
 	Task string
+
+	// The name of the container.
 	Name string
 }
 
-type ECSClient interface {
-	ecs.ListTasksAPIClient
-	ecs.DescribeTasksAPIClient
+type Client interface {
+	aws_ecs.ListTasksAPIClient
+	aws_ecs.DescribeTasksAPIClient
 }
 
 type ContainerFinder interface {
 	Find(cluster string) ([]Container, error)
-	FindByIdentifier(cluster string, task string, container string) ([]Container, error)
+	FindByIdentifier(cluster, task, container string) ([]Container, error)
 }
 
 type containerFinder struct {
-	timeout time.Duration
-	ecs     ECSClient
+	timeout   time.Duration
+	ecsClient Client
 }
 
-func NewContainerFinder(cfg *Config) ContainerFinder {
+func NewContainerFinder(cfg *config.Config) ContainerFinder {
 	return &containerFinder{
-		timeout: cfg.timeout,
-		ecs:     ecs.NewFromConfig(cfg.awsCfg),
+		timeout:   cfg.Timeout,
+		ecsClient: aws_ecs.NewFromConfig(cfg.AWSConfig),
 	}
 }
 
@@ -42,7 +47,7 @@ func (f *containerFinder) Find(cluster string) ([]Container, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
 	defer cancel()
 
-	p := ecs.NewListTasksPaginator(f.ecs, &ecs.ListTasksInput{
+	p := aws_ecs.NewListTasksPaginator(f.ecsClient, &aws_ecs.ListTasksInput{
 		Cluster:    &cluster,
 		MaxResults: aws.Int32(100),
 	})
@@ -55,7 +60,7 @@ func (f *containerFinder) Find(cluster string) ([]Container, error) {
 			return nil, err
 		}
 
-		tasks, err := f.ecs.DescribeTasks(ctx, &ecs.DescribeTasksInput{
+		tasks, err := f.ecsClient.DescribeTasks(ctx, &aws_ecs.DescribeTasksInput{
 			Cluster: &cluster,
 			Tasks:   page.TaskArns,
 		})
@@ -82,11 +87,11 @@ func (f *containerFinder) Find(cluster string) ([]Container, error) {
 	return containers, nil
 }
 
-func (f *containerFinder) FindByIdentifier(cluster string, task string, container string) ([]Container, error) {
+func (f *containerFinder) FindByIdentifier(cluster, task, container string) ([]Container, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), f.timeout)
 	defer cancel()
 
-	tasks, err := f.ecs.DescribeTasks(ctx, &ecs.DescribeTasksInput{
+	tasks, err := f.ecsClient.DescribeTasks(ctx, &aws_ecs.DescribeTasksInput{
 		Cluster: &cluster,
 		Tasks:   []string{task},
 	})

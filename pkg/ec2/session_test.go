@@ -1,9 +1,9 @@
-package internal
+package ec2
 
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSSHArgs(t *testing.T) {
@@ -13,7 +13,7 @@ func TestSSHArgs(t *testing.T) {
 		Identity:   "key.pem",
 		InstanceID: "i-123456789",
 	})
-	require.Equal(t, expected, actual)
+	assert.Equal(t, expected, actual)
 }
 
 func TestSSHArgsWithCmd(t *testing.T) {
@@ -24,7 +24,7 @@ func TestSSHArgsWithCmd(t *testing.T) {
 		InstanceID: "i-123456789",
 		Command:    "uname -a",
 	})
-	require.Equal(t, expected, actual)
+	assert.Equal(t, expected, actual)
 }
 
 func TestSSHArgsWithFwd(t *testing.T) {
@@ -35,7 +35,7 @@ func TestSSHArgsWithFwd(t *testing.T) {
 		InstanceID:          "i-123456789",
 		LocalPortForwarding: "80:intra.example.com:80",
 	})
-	require.Equal(t, expected, actual)
+	assert.Equal(t, expected, actual)
 }
 
 func TestSCPArgs(t *testing.T) {
@@ -48,5 +48,5 @@ func TestSCPArgs(t *testing.T) {
 		Sources:    []string{"./test.txt"},
 		Target:     "/opt/",
 	})
-	require.Equal(t, expected, actual)
+	assert.Equal(t, expected, actual)
 }

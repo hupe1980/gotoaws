@@ -1,4 +1,4 @@
-package internal
+package ecs
 
 import (
 	"context"
@@ -6,23 +6,23 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	aws_ecs "github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/stretchr/testify/assert"
 )
 
-type MockECSClient struct {
-	DescribeTasksOutput *ecs.DescribeTasksOutput
+type MockClient struct {
+	DescribeTasksOutput *aws_ecs.DescribeTasksOutput
 	DescribeTasksError  error
-	ListTasksOutput     *ecs.ListTasksOutput
+	ListTasksOutput     *aws_ecs.ListTasksOutput
 	ListTasksError      error
 }
 
-func (m *MockECSClient) DescribeTasks(ctx context.Context, params *ecs.DescribeTasksInput, optFns ...func(*ecs.Options)) (*ecs.DescribeTasksOutput, error) {
+func (m *MockClient) DescribeTasks(ctx context.Context, params *aws_ecs.DescribeTasksInput, optFns ...func(*aws_ecs.Options)) (*aws_ecs.DescribeTasksOutput, error) {
 	return m.DescribeTasksOutput, m.DescribeTasksError
 }
 
-func (m *MockECSClient) ListTasks(ctx context.Context, params *ecs.ListTasksInput, optFns ...func(*ecs.Options)) (*ecs.ListTasksOutput, error) {
+func (m *MockClient) ListTasks(ctx context.Context, params *aws_ecs.ListTasksInput, optFns ...func(*aws_ecs.Options)) (*aws_ecs.ListTasksOutput, error) {
 	return m.ListTasksOutput, m.ListTasksError
 }
 
@@ -31,8 +31,8 @@ func TestContainerFinder(t *testing.T) {
 		t.Run("no ssm with identifier", func(t *testing.T) {
 			finder := &containerFinder{
 				timeout: time.Second * 15,
-				ecs: &MockECSClient{
-					DescribeTasksOutput: &ecs.DescribeTasksOutput{
+				ecsClient: &MockClient{
+					DescribeTasksOutput: &aws_ecs.DescribeTasksOutput{
 						Tasks: []types.Task{},
 					},
 					DescribeTasksError: nil,
@@ -49,8 +49,8 @@ func TestContainerFinder(t *testing.T) {
 		t.Run("single container", func(t *testing.T) {
 			finder := &containerFinder{
 				timeout: time.Second * 15,
-				ecs: &MockECSClient{
-					DescribeTasksOutput: &ecs.DescribeTasksOutput{
+				ecsClient: &MockClient{
+					DescribeTasksOutput: &aws_ecs.DescribeTasksOutput{
 						Tasks: []types.Task{
 							{
 								EnableExecuteCommand: true,
@@ -77,8 +77,8 @@ func TestContainerFinder(t *testing.T) {
 		t.Run("multi container", func(t *testing.T) {
 			finder := &containerFinder{
 				timeout: time.Second * 15,
-				ecs: &MockECSClient{
-					DescribeTasksOutput: &ecs.DescribeTasksOutput{
+				ecsClient: &MockClient{
+					DescribeTasksOutput: &aws_ecs.DescribeTasksOutput{
 						Tasks: []types.Task{
 							{
 								EnableExecuteCommand: true,

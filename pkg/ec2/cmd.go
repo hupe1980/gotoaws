@@ -1,4 +1,4 @@
-package internal
+package ec2
 
 import (
 	"context"
@@ -7,18 +7,19 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
+	"github.com/hupe1980/gotoaws/pkg/config"
 )
 
-type Command struct {
+type CommandRunner struct {
 	client     *ssm.Client
 	instanceID string
 	output     *ssm.SendCommandOutput
 	timeout    time.Duration
 }
 
-func NewCommand(cfg *Config, inst *Instance, command string) (*Command, error) {
-	client := ssm.NewFromConfig(cfg.awsCfg)
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.timeout)
+func NewCommandRunner(cfg *config.Config, inst *Instance, command []string) (*CommandRunner, error) {
+	client := ssm.NewFromConfig(cfg.AWSConfig)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.Timeout)
 
 	defer cancel()
 
@@ -37,7 +38,7 @@ func NewCommand(cfg *Config, inst *Instance, command string) (*Command, error) {
 			CloudWatchOutputEnabled: true,
 		},
 		Parameters: map[string][]string{
-			"commands": {command},
+			"commands": command,
 		},
 	}
 
@@ -46,15 +47,15 @@ func NewCommand(cfg *Config, inst *Instance, command string) (*Command, error) {
 		return nil, err
 	}
 
-	return &Command{
+	return &CommandRunner{
 		client:     client,
 		instanceID: inst.ID,
 		output:     output,
-		timeout:    cfg.timeout,
+		timeout:    cfg.Timeout,
 	}, nil
 }
 
-func (cmd *Command) Result() (string, error) {
+func (cmd *CommandRunner) Result() (string, error) {
 	input := &ssm.GetCommandInvocationInput{
 		CommandId:  cmd.output.Command.CommandId,
 		InstanceId: &cmd.instanceID,
