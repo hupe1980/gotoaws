@@ -30,7 +30,6 @@ func NewKubeclient(cfg *config.Config, cluster *Cluster, role string) (*Kubeclie
 		TLSClientConfig: rest.TLSClientConfig{
 			CAData: cluster.CAData,
 		},
-
 		ExecProvider: execConfig,
 	}
 

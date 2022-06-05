@@ -15,7 +15,7 @@ const (
 func NewExecConfig(cfg *config.Config, clusterName, role string) *api.ExecConfig {
 	execConfig := &api.ExecConfig{
 		APIVersion: apiVersion,
-		Command:    "AWS",
+		Command:    "aws",
 		Args:       []string{"--region", cfg.Region, "eks", "get-token", "--cluster-name", clusterName},
 	}
 
