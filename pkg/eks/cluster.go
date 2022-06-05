@@ -2,6 +2,7 @@ package eks
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"time"
 
@@ -25,10 +26,8 @@ type Cluster struct {
 	// The endpoint for your Kubernetes API server.
 	Endpoint string
 
-	// The Base64-encoded certificate data required to communicate with your cluster.
-	// Add this to the certificate-authority-data section of the kubeconfig file for
-	// your cluster.
-	CABase64 string
+	// CAData contains PEM-encoded certificate authority certificates
+	CAData []byte
 }
 
 type Client interface {
@@ -87,12 +86,17 @@ func (f *clusterFinder) Find(name string) ([]Cluster, error) {
 		}
 
 		if out.Cluster.Status == types.ClusterStatusActive || out.Cluster.Status == types.ClusterStatusUpdating {
+			caData, err := base64.StdEncoding.DecodeString(*out.Cluster.CertificateAuthority.Data)
+			if err != nil {
+				return nil, err
+			}
+
 			clusters = append(clusters, Cluster{
 				ARN:      *out.Cluster.Arn,
 				Name:     *out.Cluster.Name,
 				Version:  *out.Cluster.Version,
 				Endpoint: *out.Cluster.Endpoint,
-				CABase64: *out.Cluster.CertificateAuthority.Data,
+				CAData:   caData,
 			})
 		}
 	}

@@ -1,7 +1,6 @@
 package eks
 
 import (
-	"encoding/base64"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -52,19 +51,14 @@ func NewKubeconfig(filename string) (*Kubeconfig, error) {
 	}, nil
 }
 
-func (k *Kubeconfig) Update(cfg *config.Config, cluster *Cluster, role, alias string) error {
+func (k *Kubeconfig) Update(cfg *config.Config, cluster *Cluster, role, alias string) {
 	if alias == "" {
 		alias = cluster.ARN
 	}
 
-	caCert, err := base64.StdEncoding.DecodeString(cluster.CABase64)
-	if err != nil {
-		return err
-	}
-
 	k.config.Clusters[alias] = &clientcmdapi.Cluster{
 		Server:                   cluster.Endpoint,
-		CertificateAuthorityData: caCert,
+		CertificateAuthorityData: cluster.CAData,
 	}
 
 	k.config.Contexts[alias] = &clientcmdapi.Context{
@@ -79,8 +73,6 @@ func (k *Kubeconfig) Update(cfg *config.Config, cluster *Cluster, role, alias st
 	}
 
 	k.config.CurrentContext = alias
-
-	return nil
 }
 
 // WriteToDisk writes a KubeConfig object down to disk with mode 0600

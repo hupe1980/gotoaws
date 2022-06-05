@@ -40,9 +40,7 @@ func newUpdateKubeconfigCmd() *cobra.Command {
 				opts.alias = cluster.ARN
 			}
 
-			if err := kubeconfig.Update(cfg, cluster, opts.role, opts.alias); err != nil {
-				return err
-			}
+			kubeconfig.Update(cfg, cluster, opts.role, opts.alias)
 
 			if err := kubeconfig.WriteToDisk(); err != nil {
 				return err

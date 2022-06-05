@@ -2,7 +2,6 @@ package eks
 
 import (
 	"context"
-	"encoding/base64"
 	"net/http"
 	"os"
 
@@ -22,11 +21,6 @@ type Kubeclient struct {
 }
 
 func NewKubeclient(cfg *config.Config, cluster *Cluster, role string) (*Kubeclient, error) {
-	caData, err := base64.StdEncoding.DecodeString(cluster.CABase64)
-	if err != nil {
-		return nil, err
-	}
-
 	execConfig := NewExecConfig(cfg, cluster.Name, role)
 
 	execConfig.InteractiveMode = api.NeverExecInteractiveMode
@@ -34,7 +28,7 @@ func NewKubeclient(cfg *config.Config, cluster *Cluster, role string) (*Kubeclie
 	config := &rest.Config{
 		Host: cluster.Endpoint,
 		TLSClientConfig: rest.TLSClientConfig{
-			CAData: caData,
+			CAData: cluster.CAData,
 		},
 
 		ExecProvider: execConfig,
