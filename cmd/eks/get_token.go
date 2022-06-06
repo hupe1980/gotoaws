@@ -43,7 +43,9 @@ func newGetTokenCmd() *cobra.Command {
 				}
 			}
 
-			fmt.Fprintln(os.Stdout, gen.FormatJSON(*t))
+			out := gen.FormatJSON(*t)
+
+			fmt.Fprintln(os.Stdout, out)
 
 			return nil
 		},

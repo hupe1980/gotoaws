@@ -60,12 +60,7 @@ gotoaws eks exec --cluster gotoaws --role cluster-admin --namespace default --po
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.clusterName, "cluster", "", "", "arn or name of the cluster (required)")
-
-	if err := cmd.MarkFlagRequired("cluster"); err != nil {
-		panic(err)
-	}
-
+	cmd.Flags().StringVarP(&opts.clusterName, "cluster", "", "", "arn or name of the cluster")
 	cmd.Flags().StringVarP(&opts.role, "role", "r", "", "arn or name of the role")
 	cmd.Flags().StringVarP(&opts.namespace, "namespace", "n", "", "namespace of the pod (default \"all namespaces\"")
 	cmd.Flags().StringVarP(&opts.pod, "pod", "p", "", "name of the pod")

@@ -81,6 +81,7 @@ func (t *tokenGen) GetWithRole(clusterName, role string) (*Token, error) {
 func (t *tokenGen) get(client *sts.Client, clusterName string) (*Token, error) {
 	presignClient := sts.NewPresignClient(client, func(po *sts.PresignOptions) {
 		po.ClientOptions = []func(*sts.Options){
+			sts.WithAPIOptions(smithyhttp.SetHeaderValue("X-Amz-Expires", "60")),
 			sts.WithAPIOptions(smithyhttp.AddHeaderValue(clusterNameHeader, clusterName)),
 		}
 	})
