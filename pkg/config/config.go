@@ -20,7 +20,9 @@ type Config struct {
 	Profile string
 
 	// The region to send requests to.
-	Region  string
+	Region string
+
+	// The request timeout limit
 	Timeout time.Duration
 
 	// A Config provides service configuration for aws service clients

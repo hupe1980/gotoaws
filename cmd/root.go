@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/aws/smithy-go"
+	"github.com/hupe1980/gotoaws/cmd/config"
 	"github.com/hupe1980/gotoaws/cmd/ec2"
 	"github.com/hupe1980/gotoaws/cmd/ecs"
 	"github.com/hupe1980/gotoaws/cmd/eks"
@@ -55,6 +56,7 @@ ports, maintain bastion hosts, or manage SSH keys.`,
 		ec2.NewEC2Cmd(),
 		ecs.NewECSCmd(),
 		eks.NewEKSCmd(),
+		config.NewConfigCmd(),
 		newCompletionCmd(),
 	)
 

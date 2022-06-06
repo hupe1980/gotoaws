@@ -48,6 +48,7 @@ Usage:
 
 Available Commands:
   completion  Prints shell autocompletion scripts for gotoaws
+  config      Manage your local gotoaws CLI config file
   ec2         Connect to ec2
   ecs         Connect to ecs
   eks         Connect to eks
@@ -334,7 +335,28 @@ Global Flags:
       --timeout duration   timeout for network requests (default 15s)
 ```
 
+## Manage your local gotoaws CLI config file
+```
+Usage:
+  gotoaws config [command]
 
+Available Commands:
+  get         Print a config value
+  set         Create a new config value
+  unset       Remove a config value
+
+Flags:
+  -h, --help   help for config
+
+Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
+      --profile string     AWS profile
+      --region string      AWS region
+      --silent             run gotoaws without printing logs
+      --timeout duration   timeout for network requests (default 15s)
+
+Use "gotoaws config [command] --help" for more information about a command.
+```
 
 ## License
 [MIT](LICENCE)
