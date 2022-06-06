@@ -41,6 +41,7 @@ export class EKSStack extends Stack {
     });
     
     const ng = cluster.addNodegroupCapacity('NodeGroup', {
+      nodegroupName: 'gotoaws',
       instanceTypes: [new InstanceType('t3.small')],
       maxSize: 3,
       diskSize: 20,
