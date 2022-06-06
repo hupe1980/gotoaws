@@ -10,8 +10,9 @@ import (
 )
 
 type getTokenOptions struct {
-	cluster string
-	role    string
+	cluster   string
+	role      string
+	tokenOnly bool
 }
 
 func newGetTokenCmd() *cobra.Command {
@@ -43,21 +44,21 @@ func newGetTokenCmd() *cobra.Command {
 				}
 			}
 
-			out := gen.FormatJSON(*t)
+			if opts.tokenOnly {
+				fmt.Fprintln(os.Stdout, t.Token)
+			} else {
+				out := gen.FormatJSON(*t)
 
-			fmt.Fprintln(os.Stdout, out)
+				fmt.Fprintln(os.Stdout, out)
+			}
 
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.cluster, "cluster", "", "", "arn or name of the cluster (required)")
-
-	if err := cmd.MarkFlagRequired("cluster"); err != nil {
-		panic(err)
-	}
-
+	cmd.Flags().StringVarP(&opts.cluster, "cluster", "", "", "arn or name of the cluster")
 	cmd.Flags().StringVarP(&opts.role, "role", "", "", "arn or name of the role")
+	cmd.Flags().BoolVarP(&opts.tokenOnly, "token-only", "", false, "Return only the token for use with Bearer token based tools")
 
 	return cmd
 }

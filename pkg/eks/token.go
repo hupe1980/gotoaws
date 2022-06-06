@@ -131,3 +131,13 @@ func (t *tokenGen) FormatJSON(token Token) string {
 
 	return string(enc)
 }
+
+func getToken(cfg *config.Config, clusterName, role string) (*Token, error) {
+	gen := NewTokenGen(cfg)
+
+	if role != "" {
+		return gen.GetWithRole(clusterName, role)
+	}
+
+	return gen.Get(clusterName)
+}

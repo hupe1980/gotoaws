@@ -20,14 +20,17 @@ type Kubeclient struct {
 }
 
 func NewKubeclient(cfg *config.Config, cluster *Cluster, role string) (*Kubeclient, error) {
-	execConfig := NewExecConfig(cfg, cluster.Name, role)
+	token, err := getToken(cfg, cluster.Name, role)
+	if err != nil {
+		return nil, err
+	}
 
 	config := &rest.Config{
-		Host: cluster.Endpoint,
+		Host:        cluster.Endpoint,
+		BearerToken: token.Token,
 		TLSClientConfig: rest.TLSClientConfig{
 			CAData: cluster.CAData,
 		},
-		ExecProvider: execConfig,
 	}
 
 	clientset, err := kubernetes.NewForConfig(config)

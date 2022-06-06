@@ -332,9 +332,10 @@ Usage:
   gotoaws eks get-token [flags]
 
 Flags:
-      --cluster string   arn or name of the cluster (required)
+      --cluster string   arn or name of the cluster
   -h, --help             help for get-token
       --role string      arn or name of the role
+      --token-only       Return only the token for use with Bearer token based tools
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
