@@ -11,7 +11,6 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd/api"
 	"k8s.io/client-go/tools/remotecommand"
 )
 
@@ -22,8 +21,6 @@ type Kubeclient struct {
 
 func NewKubeclient(cfg *config.Config, cluster *Cluster, role string) (*Kubeclient, error) {
 	execConfig := NewExecConfig(cfg, cluster.Name, role)
-
-	execConfig.InteractiveMode = api.NeverExecInteractiveMode
 
 	config := &rest.Config{
 		Host: cluster.Endpoint,

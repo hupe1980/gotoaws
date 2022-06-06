@@ -70,7 +70,11 @@ func (t *tokenGen) GetWithRole(clusterName, role string) (*Token, error) {
 		aro.RoleSessionName = "EKSGetTokenAuth"
 	})
 
-	config, err := aws_config.LoadDefaultConfig(context.TODO(), aws_config.WithRegion(t.region), aws_config.WithCredentialsProvider(prov))
+	config, err := aws_config.LoadDefaultConfig(
+		context.TODO(),
+		aws_config.WithRegion(t.region),
+		aws_config.WithCredentialsProvider(prov),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +86,7 @@ func (t *tokenGen) get(client *sts.Client, clusterName string) (*Token, error) {
 	presignClient := sts.NewPresignClient(client, func(po *sts.PresignOptions) {
 		po.ClientOptions = []func(*sts.Options){
 			sts.WithAPIOptions(smithyhttp.SetHeaderValue("X-Amz-Expires", "60")),
-			sts.WithAPIOptions(smithyhttp.AddHeaderValue(clusterNameHeader, clusterName)),
+			sts.WithAPIOptions(smithyhttp.SetHeaderValue(clusterNameHeader, clusterName)),
 		}
 	})
 

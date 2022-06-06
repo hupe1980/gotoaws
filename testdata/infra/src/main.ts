@@ -1,7 +1,7 @@
 import { App, Stack, StackProps } from 'aws-cdk-lib';
 import { Cluster, EndpointAccess, KubernetesVersion, NodegroupAmiType } from 'aws-cdk-lib/aws-eks'
 import { InstanceType, Vpc, SubnetType } from 'aws-cdk-lib/aws-ec2'
-import { Role, AccountRootPrincipal, ManagedPolicy } from 'aws-cdk-lib/aws-iam'
+import { Role, AccountRootPrincipal, ManagedPolicy, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam'
 import { Construct } from 'constructs';
 
 export class EKSStack extends Stack {
@@ -39,6 +39,12 @@ export class EKSStack extends Stack {
       clusterName: 'gotoaws',
       mastersRole: clusterAdminRole,
     });
+
+    clusterAdminRole.addToPrincipalPolicy(new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ['eks:DescribeCluster'],
+      resources: [cluster.clusterArn]
+    }))
     
     const ng = cluster.addNodegroupCapacity('NodeGroup', {
       nodegroupName: 'gotoaws',
