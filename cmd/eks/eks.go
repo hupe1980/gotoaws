@@ -23,6 +23,7 @@ func NewEKSCmd() *cobra.Command {
 		newGetTokenCmd(),
 		newExecCmd(),
 		newFwdCmd(),
+		newLogsCmd(),
 	)
 
 	return cmd

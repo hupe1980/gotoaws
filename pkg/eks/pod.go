@@ -59,7 +59,7 @@ func (p *podFinder) Find(namespace, labelSelector string) ([]Pod, error) {
 	pods := []Pod{}
 
 	for _, p := range podList.Items {
-		for _, c := range p.Spec.Containers {
+		for _, c := range append(p.Spec.InitContainers, p.Spec.Containers...) {
 			ports := []ContainerPort{}
 
 			for _, p := range c.Ports {
@@ -95,7 +95,7 @@ func (p *podFinder) FindByIdentifier(namespace, podName, container string) ([]Po
 
 	pods := []Pod{}
 
-	for _, c := range pod.Spec.Containers {
+	for _, c := range append(pod.Spec.InitContainers, pod.Spec.Containers...) {
 		if container == "" || container == c.Name {
 			ports := []ContainerPort{}
 

@@ -257,6 +257,7 @@ Available Commands:
   exec              Execute a command in a container
   fwd               Port forwarding
   get-token         Get a token for authentication with an Amazon EKS cluster
+  logs              Print the logs for a container in a pod
   update-kubeconfig Configures kubectl so that you can connect to an Amazon EKS cluster
 
 Flags:
@@ -334,6 +335,31 @@ Flags:
       --cluster string   arn or name of the cluster (required)
   -h, --help             help for get-token
       --role string      arn or name of the role
+
+Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
+      --profile string     AWS profile
+      --region string      AWS region
+      --silent             run gotoaws without printing logs
+      --timeout duration   timeout for network requests (default 15s)
+```
+
+### Print the logs for a container in a pod
+```
+Usage:
+  gotoaws eks logs [flags]
+
+Examples:
+gotoaws eks logs --cluster gotoaws --role cluster-admin --pod nginx
+gotoaws eks logs --cluster gotoaws --role cluster-admin --pod nginx --container nginx
+
+Flags:
+      --cluster string     arn or name of the cluster
+  -c, --container string   name of the container
+  -h, --help               help for logs
+  -n, --namespace string   namespace of the pod (default for finder "all namespaces"
+  -p, --pod string         name of the pod
+      --role string        arn or name of the role
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
