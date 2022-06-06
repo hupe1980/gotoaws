@@ -6,6 +6,15 @@ import (
 	"github.com/hupe1980/gotoaws/pkg/config"
 )
 
+// ContainerPort represents a network port in a single container.
+type ContainerPort struct {
+	// Number of port to expose on the pod's IP address
+	Port int32
+
+	// Protocol for port. Must be UDP, TCP, or SCTP.
+	Protocol string
+}
+
 // An object representing a pod.
 type Pod struct {
 	// The name of the pod.
@@ -16,6 +25,9 @@ type Pod struct {
 
 	// The name of the container
 	Container string
+
+	// List of ports to expose from the container
+	ContainerPorts []ContainerPort
 }
 
 type PodFinder interface {
@@ -48,10 +60,22 @@ func (p *podFinder) Find(namespace, labelSelector string) ([]Pod, error) {
 
 	for _, p := range podList.Items {
 		for _, c := range p.Spec.Containers {
+			ports := []ContainerPort{}
+
+			for _, p := range c.Ports {
+				protocol := "TCP"
+				if p.Protocol != "" {
+					protocol = string(p.Protocol)
+				}
+
+				ports = append(ports, ContainerPort{Port: p.ContainerPort, Protocol: protocol})
+			}
+
 			pods = append(pods, Pod{
-				Name:      p.Name,
-				Namespace: p.Namespace,
-				Container: c.Name,
+				Name:           p.Name,
+				Namespace:      p.Namespace,
+				Container:      c.Name,
+				ContainerPorts: ports,
 			})
 		}
 	}
@@ -73,10 +97,22 @@ func (p *podFinder) FindByIdentifier(namespace, podName, container string) ([]Po
 
 	for _, c := range pod.Spec.Containers {
 		if container == "" || container == c.Name {
+			ports := []ContainerPort{}
+
+			for _, p := range c.Ports {
+				protocol := "TCP"
+				if p.Protocol != "" {
+					protocol = string(p.Protocol)
+				}
+
+				ports = append(ports, ContainerPort{Port: p.ContainerPort, Protocol: protocol})
+			}
+
 			pods = append(pods, Pod{
-				Name:      pod.Name,
-				Namespace: pod.Namespace,
-				Container: c.Name,
+				Name:           pod.Name,
+				Namespace:      pod.Namespace,
+				Container:      c.Name,
+				ContainerPorts: ports,
 			})
 		}
 	}

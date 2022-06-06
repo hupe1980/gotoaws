@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hupe1980/gotoaws/internal"
 	"github.com/hupe1980/gotoaws/pkg/config"
 	"github.com/hupe1980/gotoaws/pkg/eks"
 	"github.com/manifoldco/promptui"
@@ -21,6 +22,7 @@ func NewEKSCmd() *cobra.Command {
 		newUpdateKubeconfigCmd(),
 		newGetTokenCmd(),
 		newExecCmd(),
+		newFwdCmd(),
 	)
 
 	return cmd
@@ -80,6 +82,12 @@ func findPod(cfg *config.Config, cluster *eks.Cluster, role, namespace, podName,
 	}
 
 	if podName != "" {
+		if namespace == "" {
+			internal.PrintInfo("No namspespace was specified. Set namespace to \"default\"")
+
+			namespace = "default"
+		}
+
 		var pods []eks.Pod
 
 		pods, err = finder.FindByIdentifier(namespace, podName, container)

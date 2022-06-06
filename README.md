@@ -255,6 +255,7 @@ Usage:
 
 Available Commands:
   exec              Execute a command in a container
+  fwd               Port forwarding
   get-token         Get a token for authentication with an Amazon EKS cluster
   update-kubeconfig Configures kubectl so that you can connect to an Amazon EKS cluster
 
@@ -283,12 +284,38 @@ gotoaws eks exec --cluster gotoaws --role cluster-admin -- cat /etc/passwd
 gotoaws eks exec --cluster gotoaws --role cluster-admin --namespace default --pod nginx -- date
 
 Flags:
-      --cluster string     arn or name of the cluster (required)
+      --cluster string     arn or name of the cluster
   -c, --container string   name of the container
   -h, --help               help for exec
   -n, --namespace string   namespace of the pod (default "all namespaces"
   -p, --pod string         name of the pod
-  -r, --role string        arn or name of the role
+      --role string        arn or name of the role
+
+Global Flags:
+      --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
+      --profile string     AWS profile
+      --region string      AWS region
+      --silent             run gotoaws without printing logs
+      --timeout duration   timeout for network requests (default 15s)
+```
+
+### Port forwarding
+```
+Usage:
+  gotoaws eks fwd [flags]
+
+Examples:
+gotoaws eks fwd --cluster gotoaws --role cluster-admin --pod nginx
+gotoaws eks fwd --cluster gotoaws --role cluster-admin --pod nginx --local 8000 --remote 80
+
+Flags:
+      --cluster string     arn or name of the cluster
+  -h, --help               help for fwd
+  -l, --local int32        the local port
+  -n, --namespace string   namespace of the pod (default "all namespaces"
+  -p, --pod string         name of the pod
+  -r, --remote int32       the container port
+      --role string        arn or name of the role
 
 Global Flags:
       --config string      config file (default "$HOME/.config/configstore/gotoaws.json")
