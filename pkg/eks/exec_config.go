@@ -14,9 +14,10 @@ const (
 
 func NewExecConfig(cfg *config.Config, clusterName, role string) *api.ExecConfig {
 	execConfig := &api.ExecConfig{
-		APIVersion: apiVersion,
-		Command:    "aws",
-		Args:       []string{"--region", cfg.Region, "eks", "get-token", "--cluster-name", clusterName},
+		APIVersion:      apiVersion,
+		Command:         "gotoaws",
+		Args:            []string{"--region", cfg.Region, "--silent", "eks", "get-token", "--cluster", clusterName},
+		InteractiveMode: api.NeverExecInteractiveMode,
 	}
 
 	if role != "" {
