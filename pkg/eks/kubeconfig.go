@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hupe1980/gotoaws/pkg/config"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
@@ -51,7 +50,7 @@ func NewKubeconfig(filename string) (*Kubeconfig, error) {
 	}, nil
 }
 
-func (k *Kubeconfig) Update(cfg *config.Config, alias string, cluster *Cluster, exec *clientcmdapi.ExecConfig) {
+func (k *Kubeconfig) Update(alias string, cluster *Cluster, exec *clientcmdapi.ExecConfig) {
 	if alias == "" {
 		alias = cluster.ARN
 	}
