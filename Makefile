@@ -7,7 +7,7 @@ MAKEFLAGS += --silent
 .PHONY: setup
 ## setup: Setup installes dependencies
 setup:
-	go mod tidy
+	go mod tidy -compat=1.17
 
 .PHONY: test
 ## test: Runs go test with default values
