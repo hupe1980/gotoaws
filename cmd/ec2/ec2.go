@@ -55,7 +55,7 @@ func chooseInstance(instances []ec2.Instance) (*ec2.Instance, error) {
 	templates := &promptui.SelectTemplates{
 		Active:   fmt.Sprintf(`%s {{ .Name | cyan | bold }} ({{ .ID }})`, promptui.IconSelect),
 		Inactive: `   {{ .Name | cyan }} ({{ .ID }})`,
-		Selected: fmt.Sprintf(`%s {{ "Instance" | bold }}: {{ .Name | cyan }} ({{ .ID }})`, promptui.IconGood),
+		Selected: fmt.Sprintf(`%s {{ "Instance" }}: {{ .Name | cyan }} ({{ .ID }})`, promptui.IconGood),
 	}
 
 	searcher := func(input string, index int) bool {

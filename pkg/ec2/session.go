@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	aws_ssm "github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/hupe1980/gotoaws/internal"
+	"github.com/hupe1980/gotoaws/internal/exec"
 	"github.com/hupe1980/gotoaws/pkg/config"
 	"github.com/hupe1980/gotoaws/pkg/ssm"
 )
@@ -94,11 +94,9 @@ func (sess *session) RunSSH(input *RunSSHInput) error {
 		}
 	}
 
-	if err := internal.RunSubprocess("ssh", args...); err != nil {
-		return err
-	}
+	cmd := exec.NewCmd()
 
-	return nil
+	return cmd.InteractiveRun("ssh", args...)
 }
 
 func (sess *session) RunSCP(input *RunSCPInput) error {
@@ -115,13 +113,9 @@ func (sess *session) RunSCP(input *RunSCPInput) error {
 		}
 	}
 
-	fmt.Println(strings.Join(args, " "))
+	cmd := exec.NewCmd()
 
-	if err := internal.RunSubprocess("scp", args...); err != nil {
-		return err
-	}
-
-	return nil
+	return cmd.InteractiveRun("scp", args...)
 }
 
 func sshArgs(input *RunSSHInput) string {

@@ -49,7 +49,7 @@ func chooseCluster(clusters []eks.Cluster) (*eks.Cluster, error) {
 	templates := &promptui.SelectTemplates{
 		Active:   fmt.Sprintf(`%s {{ .Name | cyan | bold }} ({{ .Version }})`, promptui.IconSelect),
 		Inactive: `   {{ .Name | cyan }} ({{ .Version }})`,
-		Selected: fmt.Sprintf(`%s {{ "Cluster" | bold }}: {{ .Name | cyan }} ({{ .Version }})`, promptui.IconGood),
+		Selected: fmt.Sprintf(`%s {{ "Cluster" }}: {{ .Name | cyan }} ({{ .Version }})`, promptui.IconGood),
 	}
 
 	searcher := func(input string, index int) bool {
@@ -84,7 +84,7 @@ func findPod(cfg *config.Config, cluster *eks.Cluster, role, namespace, podName,
 
 	if podName != "" {
 		if namespace == "" {
-			internal.PrintInfo("No namspespace was specified. Set namespace to \"default\"")
+			internal.PrintInfo("No namespace was specified. Set namespace to \"default\"")
 
 			namespace = "default"
 		}
@@ -108,17 +108,15 @@ func findPod(cfg *config.Config, cluster *eks.Cluster, role, namespace, podName,
 		return nil, err
 	}
 
-	fmt.Println(pods)
-
 	return choosePod(pods)
 }
 
 // nolint: dupl // ok
 func choosePod(pods []eks.Pod) (*eks.Pod, error) {
 	templates := &promptui.SelectTemplates{
-		Active:   fmt.Sprintf(`%s {{ .Name | cyan | bold }} [{{ .Container }} ({{ .Namespace }})]`, promptui.IconSelect),
-		Inactive: `   {{ .Name | cyan }} [{{ .Container }} ({{ .Namespace }})]`,
-		Selected: fmt.Sprintf(`%s {{ "Pod" | bold }}: {{ .Name | cyan }} [{{ .Container }} ({{ .Namespace }})]`, promptui.IconGood),
+		Active:   fmt.Sprintf(`%s {{ "pod" | cyan | bold }}/{{ .Name | cyan | bold }}/{{ .Container | cyan | bold }} ({{ .Namespace }})`, promptui.IconSelect),
+		Inactive: `   {{ "pod" | cyan }}/{{ .Name | cyan }}/{{ .Container | cyan }} ({{ .Namespace }})`,
+		Selected: fmt.Sprintf(`%s {{ "Pod" }}: {{ "pod" | cyan }}/{{ .Name | cyan }}/{{ .Container | cyan }} ({{ .Namespace }})`, promptui.IconGood),
 	}
 
 	searcher := func(input string, index int) bool {

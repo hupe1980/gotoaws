@@ -51,7 +51,7 @@ func chooseContainer(containers []ecs.Container) (string, string, error) {
 	templates := &promptui.SelectTemplates{
 		Active:   fmt.Sprintf(`%s {{ .Name | cyan | bold }} ({{ .Task }})`, promptui.IconSelect),
 		Inactive: `   {{ .Name | cyan }} ({{ .Task }})`,
-		Selected: fmt.Sprintf(`%s {{ "Container" | bold }}: {{ .Name | cyan }} ({{ .Task }})`, promptui.IconGood),
+		Selected: fmt.Sprintf(`%s {{ "Container" }}: {{ .Name | cyan }} ({{ .Task }})`, promptui.IconGood),
 	}
 
 	searcher := func(input string, index int) bool {

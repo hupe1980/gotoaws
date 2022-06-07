@@ -51,7 +51,7 @@ func NewKubeconfig(filename string) (*Kubeconfig, error) {
 	}, nil
 }
 
-func (k *Kubeconfig) Update(cfg *config.Config, cluster *Cluster, role, alias string) {
+func (k *Kubeconfig) Update(cfg *config.Config, alias string, cluster *Cluster, exec *clientcmdapi.ExecConfig) {
 	if alias == "" {
 		alias = cluster.ARN
 	}
@@ -65,8 +65,6 @@ func (k *Kubeconfig) Update(cfg *config.Config, cluster *Cluster, role, alias st
 		Cluster:  cluster.ARN,
 		AuthInfo: cluster.ARN,
 	}
-
-	exec := NewExecConfig(cfg, cluster.Name, role)
 
 	k.config.AuthInfos[alias] = &clientcmdapi.AuthInfo{
 		Exec: exec,

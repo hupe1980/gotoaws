@@ -17,6 +17,7 @@ require (
 
 require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.6
+	github.com/golang/mock v1.5.0
 	k8s.io/api v0.24.1
 	k8s.io/apimachinery v0.24.1
 )

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/hupe1980/gotoaws/internal"
+	"github.com/hupe1980/gotoaws/internal/exec"
 )
 
 type Session struct {
@@ -49,7 +49,9 @@ func (sess *Session) RunPlugin() error {
 		return err
 	}
 
-	return internal.RunSubprocess(sess.Plugin, string(sessJSON), sess.Region, "StartSession", sess.Profile, string(inputJSON))
+	cmd := exec.NewCmd()
+
+	return cmd.InteractiveRun(sess.Plugin, string(sessJSON), sess.Region, "StartSession", sess.Profile, string(inputJSON))
 }
 
 func (sess *Session) ProxyCommand() (string, error) {
