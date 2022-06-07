@@ -3,6 +3,7 @@ package ec2
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
@@ -38,7 +39,7 @@ func NewCommandRunner(cfg *config.Config, inst *Instance, command []string) (*Co
 			CloudWatchOutputEnabled: true,
 		},
 		Parameters: map[string][]string{
-			"commands": command,
+			"commands": {strings.Join(command, " ")},
 		},
 	}
 
