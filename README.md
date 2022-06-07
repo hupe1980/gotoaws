@@ -412,5 +412,15 @@ Global Flags:
 Use "gotoaws config [command] --help" for more information about a command.
 ```
 
+Supported `KEY` values:
+
+Key | Description 
+--- | ------------
+profile | AWS profile
+region | AWS region
+timeout | timeout for network requests
+silent | run gotoaws without printing logs
+
+
 ## License
 [MIT](LICENCE)
