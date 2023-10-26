@@ -19,8 +19,8 @@ func newFwdCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "fwd",
 		Short: "Port forwarding",
-		Example: `gotoaws fwd run -t myserver -l 8080 -r 8080
-gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com`,
+		Example: `gotoaws ec2 fwd run -t myserver -l 8080 -r 8080
+gotoaws ec2 fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

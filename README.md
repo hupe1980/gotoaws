@@ -116,8 +116,8 @@ Usage:
   gotoaws ec2 fwd [flags]
 
 Examples:
-gotoaws fwd run -t myserver -l 8080 -r 8080
-gotoaws fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com
+gotoaws ec2 fwd run -t myserver -l 8080 -r 8080
+gotoaws ec2 fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com
 
 Flags:
   -h, --help            help for fwd
