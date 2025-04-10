@@ -11,8 +11,6 @@ linters-settings:
       - opinionated
       - performance
       - style
-  govet:
-    shadowing: true
   nolintlint:
     require-explanation: true
     require-specific: true
