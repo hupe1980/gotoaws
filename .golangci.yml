@@ -12,7 +12,7 @@ linters-settings:
       - performance
       - style
   govet:
-    check-shadowing: true
+    shadowing: true
   nolintlint:
     require-explanation: true
     require-specific: true
@@ -21,12 +21,10 @@ linters:
   disable-all: true
   enable:
     - bodyclose
-    - deadcode
-    - depguard
+    #- depguard
     - dogsled
     - dupl
     - errcheck
-    - exportloopref
     - exhaustive
     - goconst
     - gofmt
@@ -38,20 +36,18 @@ linters:
     - govet
     - ineffassign
     - misspell
-    - nolintlint
+    #- nolintlint
     - nakedret
     - prealloc
     - predeclared
     - revive
     - staticcheck
-    - structcheck
     - stylecheck
     - thelper
     - tparallel
     - typecheck
     - unconvert
     - unparam
-    - varcheck
     - whitespace
     - wsl
 

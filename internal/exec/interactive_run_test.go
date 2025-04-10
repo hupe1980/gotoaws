@@ -16,7 +16,7 @@ func TestInteractiveRun(t *testing.T) {
 		defer ctrl.Finish()
 
 		cmd := &Cmd{
-			command: func(name string, args []string, opts ...CmdOption) cmdRunner {
+			command: func(name string, _ []string, opts ...CmdOption) cmdRunner {
 				assert.Equal(t, "date", name)
 
 				// Make sure that the options applied are what we expect.

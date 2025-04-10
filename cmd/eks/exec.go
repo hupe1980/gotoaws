@@ -1,6 +1,8 @@
 package eks
 
 import (
+	"context"
+
 	"github.com/hupe1980/gotoaws/internal"
 	"github.com/hupe1980/gotoaws/pkg/eks"
 	"github.com/spf13/cobra"
@@ -51,7 +53,7 @@ gotoaws eks exec --cluster gotoaws --role cluster-admin --namespace default --po
 				return err
 			}
 
-			return client.Exec(&eks.ExecInput{
+			return client.Exec(context.Background(), &eks.ExecInput{
 				Namespace: pod.Namespace,
 				PodName:   pod.Name,
 				Container: pod.Container,

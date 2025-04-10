@@ -29,7 +29,7 @@ func newLogsCmd() *cobra.Command {
 		SilenceErrors: true,
 		Example: `gotoaws eks logs --cluster gotoaws --role cluster-admin --pod nginx
 gotoaws eks logs --cluster gotoaws --role cluster-admin --pod nginx --container nginx`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			cfg, err := internal.NewConfigFromFlags()
 			if err != nil {
 				return err

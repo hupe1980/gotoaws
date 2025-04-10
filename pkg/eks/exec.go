@@ -1,6 +1,7 @@
 package eks
 
 import (
+	"context"
 	"net/http"
 	"os"
 
@@ -23,7 +24,7 @@ type ExecInput struct {
 	Command []string
 }
 
-func (k *Kubeclient) Exec(input *ExecInput) error {
+func (k *Kubeclient) Exec(ctx context.Context, input *ExecInput) error {
 	req := k.clientset.CoreV1().RESTClient().
 		Post().
 		Namespace(input.Namespace).
@@ -44,7 +45,7 @@ func (k *Kubeclient) Exec(input *ExecInput) error {
 		return err
 	}
 
-	return executor.Stream(remotecommand.StreamOptions{
+	return executor.StreamWithContext(ctx, remotecommand.StreamOptions{
 		Stdin:             os.Stdin,
 		Stdout:            os.Stdout,
 		Stderr:            os.Stderr,

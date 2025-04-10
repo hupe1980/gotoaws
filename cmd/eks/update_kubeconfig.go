@@ -20,7 +20,7 @@ func newUpdateKubeconfigCmd() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		Example:       "",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			cfg, err := internal.NewConfigFromFlags()
 			if err != nil {
 				return err

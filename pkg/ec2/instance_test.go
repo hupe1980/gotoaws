@@ -17,7 +17,7 @@ type MockEC2Client struct {
 	DescribeInstancesError  error
 }
 
-func (m *MockEC2Client) DescribeInstances(ctx context.Context, params *aws_ec2.DescribeInstancesInput, optFns ...func(*aws_ec2.Options)) (*aws_ec2.DescribeInstancesOutput, error) {
+func (m *MockEC2Client) DescribeInstances(_ context.Context, _ *aws_ec2.DescribeInstancesInput, _ ...func(*aws_ec2.Options)) (*aws_ec2.DescribeInstancesOutput, error) {
 	return m.DescribeInstancesOutput, m.DescribeInstancesError
 }
 
@@ -26,7 +26,7 @@ type MockSSMClient struct {
 	DescribeInstanceInformationError  error
 }
 
-func (m *MockSSMClient) DescribeInstanceInformation(ctx context.Context, params *ssm.DescribeInstanceInformationInput, optFns ...func(*ssm.Options)) (*ssm.DescribeInstanceInformationOutput, error) {
+func (m *MockSSMClient) DescribeInstanceInformation(_ context.Context, _ *ssm.DescribeInstanceInformationInput, _ ...func(*ssm.Options)) (*ssm.DescribeInstanceInformationOutput, error) {
 	return m.DescribeInstanceInformationOutput, m.DescribeInstanceInformationError
 }
 

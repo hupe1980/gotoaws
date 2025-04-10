@@ -1,7 +1,6 @@
 package eks
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -34,7 +33,7 @@ func NewKubeconfig(filename string) (*Kubeconfig, error) {
 		}
 	}
 
-	kubeconfigBytes, err := ioutil.ReadFile(kubeConfigFilename)
+	kubeconfigBytes, err := os.ReadFile(kubeConfigFilename)
 	if err != nil && !os.IsNotExist(err) {
 		return nil, err
 	}

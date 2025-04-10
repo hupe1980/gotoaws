@@ -22,12 +22,6 @@ brew tap hupe1980/gotoaws
 brew install gotoaws
 ```
 
-### snapcraft:
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/gotoaws)
-```bash
-sudo snap install --classic gotoaws
-```
-
 ### scoop:
 ```bash
 scoop bucket add gotoaws https://github.com/hupe1980/gotoaws-bucket.git

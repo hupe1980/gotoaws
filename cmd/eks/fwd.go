@@ -30,7 +30,7 @@ func newFwdCmd() *cobra.Command {
 		SilenceErrors: true,
 		Example: `gotoaws eks fwd --cluster gotoaws --role cluster-admin --pod nginx
 gotoaws eks fwd --cluster gotoaws --role cluster-admin --pod nginx --local 8000 --remote 80`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			cfg, err := internal.NewConfigFromFlags()
 			if err != nil {
 				return err

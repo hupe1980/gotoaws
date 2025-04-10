@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/hupe1980/gotoaws/pkg/config"
@@ -34,7 +35,7 @@ func NewCommandRunner(cfg *config.Config, inst *Instance, command []string) (*Co
 	input := &ssm.SendCommandInput{
 		DocumentName:   &docName,
 		InstanceIds:    []string{inst.ID},
-		TimeoutSeconds: int32(60), // 60 seconds
+		TimeoutSeconds: aws.Int32(60), // 60 seconds
 		CloudWatchOutputConfig: &types.CloudWatchOutputConfig{
 			CloudWatchOutputEnabled: true,
 		},

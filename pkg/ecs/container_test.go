@@ -18,11 +18,11 @@ type MockClient struct {
 	ListTasksError      error
 }
 
-func (m *MockClient) DescribeTasks(ctx context.Context, params *aws_ecs.DescribeTasksInput, optFns ...func(*aws_ecs.Options)) (*aws_ecs.DescribeTasksOutput, error) {
+func (m *MockClient) DescribeTasks(_ context.Context, _ *aws_ecs.DescribeTasksInput, _ ...func(*aws_ecs.Options)) (*aws_ecs.DescribeTasksOutput, error) {
 	return m.DescribeTasksOutput, m.DescribeTasksError
 }
 
-func (m *MockClient) ListTasks(ctx context.Context, params *aws_ecs.ListTasksInput, optFns ...func(*aws_ecs.Options)) (*aws_ecs.ListTasksOutput, error) {
+func (m *MockClient) ListTasks(_ context.Context, _ *aws_ecs.ListTasksInput, _ ...func(*aws_ecs.Options)) (*aws_ecs.ListTasksOutput, error) {
 	return m.ListTasksOutput, m.ListTasksError
 }
 

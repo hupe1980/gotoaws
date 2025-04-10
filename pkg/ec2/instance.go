@@ -153,7 +153,7 @@ func (f *instanceFinder) findSSMManagedInstances() ([]ssmTypes.InstanceInformati
 	}
 	input := &ssm.DescribeInstanceInformationInput{
 		Filters:    []ssmTypes.InstanceInformationStringFilter{onlineFilter},
-		MaxResults: 50,
+		MaxResults: aws.Int32(50),
 	}
 
 	p := ssm.NewDescribeInstanceInformationPaginator(f.ssmClient, input)

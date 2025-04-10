@@ -17,7 +17,7 @@ func newUnsetCmd() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		Example:       "",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			cfg := viper.AllSettings()
 
 			delete(cfg, opts.key)

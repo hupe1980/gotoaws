@@ -23,7 +23,7 @@ func newFwdCmd() *cobra.Command {
 gotoaws ec2 fwd run -t myserver -l 5432 -r 5432 -H xxx.rds.amazonaws.com`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			cfg, err := internal.NewConfigFromFlags()
 			if err != nil {
 				return err

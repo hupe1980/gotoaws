@@ -25,7 +25,7 @@ func newSSHCmd() *cobra.Command {
 		Example:       "gotoaws ssh -t myserver -i key.pem",
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, args []string) error {
 			cfg, err := internal.NewConfigFromFlags()
 			if err != nil {
 				return err

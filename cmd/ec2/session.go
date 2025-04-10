@@ -19,7 +19,7 @@ func newSessionCmd() *cobra.Command {
 		Example:       "gotoaws ec2 session -t myserver",
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			cfg, err := internal.NewConfigFromFlags()
 			if err != nil {
 				return err

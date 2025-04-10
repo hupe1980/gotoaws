@@ -26,7 +26,7 @@ ci: build test
 .PHONY: run
 ## run: Runs gotoaws
 run:
-	go run main.go eks exec --cluster gotoaws --role cluster-admin --pod nginx -- date
+	go run main.go ec2 session
 
 .PHONY: help
 ## help: Prints this help message

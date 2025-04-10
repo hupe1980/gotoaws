@@ -14,7 +14,7 @@ func TestRun(t *testing.T) {
 		defer ctrl.Finish()
 
 		cmd := &Cmd{
-			command: func(name string, args []string, opts ...CmdOption) cmdRunner {
+			command: func(name string, _ []string, _ ...CmdOption) cmdRunner {
 				assert.Equal(t, "date", name)
 
 				m := NewMockcmdRunner(ctrl)
